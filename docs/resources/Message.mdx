@@ -545,22 +545,22 @@ Certain embed types are used to power special UIs. These embeds use [fields](#DO
 > info
 > For the `attachments` array in Message Create/Edit requests, only the `id` is required.
 
-| Field          | Type      | Description                                                                                                                                      |
-|----------------|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| id             | snowflake | attachment id                                                                                                                                    |
-| filename       | string    | name of file attached                                                                                                                            |
-| title?         | string    | the title of the file                                                                                                                            |
-| description?   | string    | description for the file (max 1024 characters)                                                                                                   |
-| content_type?  | string    | the attachment's [media type](https://en.wikipedia.org/wiki/Media_type)                                                                          |
-| size           | integer   | size of file in bytes                                                                                                                            |
-| url            | string    | source url of file                                                                                                                               |
-| proxy_url      | string    | a proxied url of file                                                                                                                            |
-| height?        | ?integer  | height of file (if image)                                                                                                                        |
-| width?         | ?integer  | width of file (if image)                                                                                                                         |
-| ephemeral? \*  | boolean   | whether this attachment is ephemeral                                                                                                             |
-| duration_secs? | float     | the duration of the audio file (currently for voice messages)                                                                                    |
-| waveform?      | string    | base64 encoded bytearray representing a sampled waveform (currently for voice messages)                                                          |
-| flags?         | integer   | [attachment flags](#DOCS_RESOURCES_MESSAGE/attachment-object-attachment-flags) combined as a [bitfield](https://en.wikipedia.org/wiki/Bit_field) |
+| Field          | Type      | Description                                                                                                                                                         |
+|----------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| id             | snowflake | attachment id                                                                                                                                                       |
+| filename       | string    | name of file attached                                                                                                                                               |
+| title?         | string    | the title of the file                                                                                                                                               |
+| description?   | string    | description for the file (max 1024 characters)                                                                                                                      |
+| content_type?  | string    | the attachment's [media type](https://en.wikipedia.org/wiki/Media_type)                                                                                             |
+| size           | integer   | size of file in bytes                                                                                                                                               |
+| url            | string    | source url of file                                                                                                                                                  |
+| proxy_url      | string    | a proxied url of file                                                                                                                                               |
+| height?        | ?integer  | height of file (if image)                                                                                                                                           |
+| width?         | ?integer  | width of file (if image)                                                                                                                                            |
+| ephemeral? \*  | boolean   | whether this attachment is ephemeral                                                                                                                                |
+| duration_secs? | float     | the duration of the audio file (currently for voice messages)                                                                                                       |
+| waveform?      | string    | base64 encoded bytearray representing a [sampled waveform](#DOCS_RESOURCES_MESSAGE/attachment-object-visualizing-a-sampled-waveform) (currently for voice messages) |
+| flags?         | integer   | [attachment flags](#DOCS_RESOURCES_MESSAGE/attachment-object-attachment-flags) combined as a [bitfield](https://en.wikipedia.org/wiki/Bit_field)                    |
 
 \* Ephemeral attachments will automatically be removed after a set period of time. Ephemeral attachments on messages are guaranteed to be available as long as the message itself exists.
 
@@ -569,6 +569,212 @@ Certain embed types are used to power special UIs. These embeds use [fields](#DO
 | Flag     | Value    | Description                                                       |
 |----------|----------|-------------------------------------------------------------------|
 | IS_REMIX | `1 << 2` | this attachment has been edited using the remix feature on mobile |
+
+
+###### Visualizing A Sampled Waveform
+
+![Sample visualized waveform](sample-waveform.png)
+
+<Collapsible title="Example javascript waveform visualizer" description="An example waveform visualizer written in javascript" icon="code">
+An example `WaveformVisualizer` in javascript could look like this:
+
+```javascript
+class WaveformVisualizer {
+  constructor(base64Waveform) {
+    this.waveformByteData = this.decodeWaveform(base64Waveform);
+  }
+
+  // Decodes the base64 encoded waveform
+  decodeWaveform(base64Waveform) {
+    const binaryString = atob(base64Waveform);
+    const byteData = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      byteData[i] = binaryString.charCodeAt(i);
+    }
+    return byteData;
+  }
+
+  // Creates a waveform image
+  createWaveformImage(width = 500, height = 100, backgroundColor = 'black', barColors = ['lightblue', 'lightskyblue', 'deepskyblue']) {
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+
+    // Set background color
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, width, height);
+
+    const barWidth = width / this.waveformByteData.length / 2;
+    const xScale = width / this.waveformByteData.length;
+    const yScale = height / 2 / 255;
+
+    // Create gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    for (let i = 0; i < barColors.length; i++) {
+      gradient.addColorStop(i / (barColors.length - 1), barColors[i]);
+    }
+
+    ctx.fillStyle = gradient;
+
+    for (let i = 0; i < this.waveformByteData.length; i++) {
+      const x1 = i * xScale;
+      const barHeight = Math.max(2, this.waveformByteData[i] * yScale); // Ensure minimum height for small values
+      const y1 = height / 2 - barHeight;
+      const y2 = height / 2 + barHeight;
+
+      // Draw the bars with rounded corners
+      ctx.fillRect(x1, y1, barWidth, barHeight * 2);
+    }
+
+    return canvas;
+  }
+}
+
+const base64Waveform = 'AAEABwkXExkIGFODWlJ6XFtMkV6UbzQQEhs=';
+const visualizer = new WaveformVisualizer(base64Waveform);
+const waveformCanvas = visualizer.createWaveformImage();
+
+// Append the canvas to the document body
+document.body.appendChild(waveformCanvas);
+```
+
+</Collapsible>
+
+<Collapsible title="Example csharp waveform visualizer" description="An example waveform visualizer written in csharp" icon="code">
+An example `WaveformVisualizer` in csharp could look like this.
+
+You need to install the NuGet packages `Microsoft.Maui.Graphics` and `Microsoft.Maui.Graphics.Skia`.
+
+```csharp
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Graphics.Skia;
+
+public sealed class WaveformVisualizer
+{
+    public IImage? Image { get; internal set; }
+
+    // Decodes the base64 encoded waveform
+    private static byte[] DecodeWaveform(string base64Waveform)
+      => return Convert.FromBase64String(base64Waveform);
+
+    // Creates a waveform image
+    public WaveformVisualizer CreateWaveformImage(string base64Waveform, int width = 500, int height = 100)
+    {
+        var waveformByteData = DecodeWaveform(base64Waveform);
+
+        if (waveformByteData == null || waveformByteData.Length == 0)
+            throw new ArgumentException("Waveform data is empty.");
+
+        var backgroundColor = Colors.Black;
+        Color[] barColors = { Colors.LightBlue, Colors.LightSkyBlue, Colors.DeepSkyBlue };
+
+        var image = new PlatformBitmapExportService().CreateContext(width, height);
+        var canvas = image.Canvas;
+        canvas.FillColor = backgroundColor;
+        canvas.FillRectangle(0, 0, width, height);
+
+        var barWidth = (float)width / waveformByteData.Length / 2;
+        var xScale = (float)width / waveformByteData.Length;
+        var yScale = (float)height / 2 / 255;
+
+        var gradientStops = barColors
+            .Select((color, index) => new PaintGradientStop((float)index / (barColors.Length - 1), color))
+            .ToArray();
+
+        var gradient = new LinearGradientPaint(gradientStops, new PointF(0, 0), new PointF(0, height));
+        canvas.SetFillPaint(gradient, new(0, 0, width, height));
+
+        for (var i = 0; i < waveformByteData.Length; i++)
+        {
+            var x1 = i * xScale;
+            var barHeight = Math.Max(2, waveformByteData[i] * yScale);
+            var y1 = ((float)height / 2) - barHeight;
+            var y2 = ((float)height / 2) + barHeight;
+
+            canvas.FillRoundedRectangle(x1, y1, barWidth, barHeight * 2, barWidth / 4);
+            canvas.SetShadow(new(2, 2), 5, Colors.Black.WithAlpha(0.5f));
+        }
+
+        this.Image = image.Image;
+
+        return this;
+    }
+
+    // Saves the waveform image to a file
+    public async Task SaveImageAsync(string filePath)
+    {
+        if (this.Image is null)
+            throw new NullReferenceException("Image was null, did you even generate a waveform image?");
+        
+        await using var stream = File.OpenWrite(filePath);
+        await this.Image.SaveAsync(stream);
+    }
+}
+
+// Example usage
+string base64Waveform = "AAEABwkXExkIGFODWlJ6XFtMkV6UbzQQEhs=";
+await new WaveformVisualizer().CreateWaveformImage(base64Waveform, 500, 100).SaveImageAsync("waveform.png");
+```
+
+</Collapsible>
+
+<Collapsible title="Example Python Waveform Visualizer" description="An example waveform visualizer written in Python" icon="code">
+An example `WaveformVisualizer` in Python could look like this.
+
+You need to install the python packages `numpy` and `Pillow`.
+
+```python
+import base64
+import numpy as np
+from PIL import Image, ImageDraw
+
+class WaveformVisualizer:
+    def __init__(self, base64_waveform):
+        self.waveform_byte_data = self.decode_waveform(base64_waveform)
+
+    # Decodes the base64 encoded waveform
+    def decode_waveform(self, base64_waveform):
+        return np.frombuffer(base64.b64decode(base64_waveform), dtype=np.uint8)
+
+    # Creates a waveform image
+    def create_waveform_image(self, width=500, height=100, background_color=(0, 0, 0), bar_colors=None):
+        if bar_colors is None:
+            bar_colors = [(173, 216, 230), (135, 206, 235), (0, 191, 255)]  # LightBlue shades
+
+        image = Image.new('RGB', (width, height), background_color)
+        draw = ImageDraw.Draw(image)
+
+        bar_width = width / len(self.waveform_byte_data) / 2
+        x_scale = width / len(self.waveform_byte_data)
+        y_scale = height / 2 / 255
+
+        for i, value in enumerate(self.waveform_byte_data):
+            x1 = i * x_scale
+            bar_height = max(2, value * y_scale)  # Ensure minimum height for small values
+            y1 = height / 2 - bar_height
+            y2 = height / 2 + bar_height
+
+            color_index = i % len(bar_colors)
+            color = bar_colors[color_index]
+            
+            draw.rectangle([x1, y1, x1 + bar_width, y2], fill=color)
+
+        return image
+
+# Example usage
+base64_waveform = "AAEABwkXExkIGFODWlJ6XFtMkV6UbzQQEhs="
+visualizer = WaveformVisualizer(base64_waveform)
+waveform_image = visualizer.create_waveform_image(500, 100)
+waveform_image.show()  # Display the image
+waveform_image.save('waveform.png')  # Save the image to a file
+```
+
+</Collapsible>
 
 ### Channel Mention Object
 
