@@ -1,6 +1,12 @@
+---
+sidebar_label: Webhook
+---
+
 # Webhook Resource
 
 Webhooks are a low-effort way to post messages to channels in Discord. They do not require a bot user or authentication to use.
+
+Apps can also subscribe to webhook events (i.e. outgoing webhooks) when events happen *in* Discord, which is detailed in the [Webhook Events](#DOCS_EVENTS_WEBHOOK_EVENTS) documentation.
 
 ### Webhook Object
 
@@ -26,6 +32,9 @@ Used to represent a webhook.
 \* These fields will be absent if the webhook creator has since lost access to the guild where the followed channel resides
 
 ###### Webhook Types
+
+> info
+> These types don't include [webhook events](#DOCS_EVENTS_WEBHOOK_EVENTS), which are outgoing webhooks sent to your app by Discord. See [Webhook Events](#DOCS_EVENTS_WEBHOOK_EVENTS) for details.
 
 | Value | Name             | Description                                                                                                    |
 |-------|------------------|----------------------------------------------------------------------------------------------------------------|
@@ -101,7 +110,7 @@ Used to represent a webhook.
 
 ## Create Webhook % POST /channels/{channel.id#DOCS_RESOURCES_CHANNEL/channel-object}/webhooks
 
-Creates a new webhook and returns a [webhook](#DOCS_RESOURCES_WEBHOOK/webhook-object) object on success. Requires the `MANAGE_WEBHOOKS` permission. Fires a [Webhooks Update](#DOCS_TOPICS_GATEWAY_EVENTS/webhooks-update) Gateway event.
+Creates a new webhook and returns a [webhook](#DOCS_RESOURCES_WEBHOOK/webhook-object) object on success. Requires the `MANAGE_WEBHOOKS` permission. Fires a [Webhooks Update](#DOCS_EVENTS_GATEWAY_EVENTS/webhooks-update) Gateway event.
 
 An error will be returned if a webhook name (`name`) is not valid. A webhook name is valid if:
 
@@ -130,13 +139,16 @@ Returns a list of guild [webhook](#DOCS_RESOURCES_WEBHOOK/webhook-object) object
 
 Returns the new [webhook](#DOCS_RESOURCES_WEBHOOK/webhook-object) object for the given id.
 
+This request requires the `MANAGE_WEBHOOKS` permission unless the application making the request owns the
+webhook. [(see: webhook.application_id)](#DOCS_RESOURCES_WEBHOOK/webhook-object)
+
 ## Get Webhook with Token % GET /webhooks/{webhook.id#DOCS_RESOURCES_WEBHOOK/webhook-object}/{webhook.token#DOCS_RESOURCES_WEBHOOK/webhook-object}
 
 Same as above, except this call does not require authentication and returns no user in the webhook object.
 
 ## Modify Webhook % PATCH /webhooks/{webhook.id#DOCS_RESOURCES_WEBHOOK/webhook-object}
 
-Modify a webhook. Requires the `MANAGE_WEBHOOKS` permission. Returns the updated [webhook](#DOCS_RESOURCES_WEBHOOK/webhook-object) object on success. Fires a [Webhooks Update](#DOCS_TOPICS_GATEWAY_EVENTS/webhooks-update) Gateway event.
+Modify a webhook. Requires the `MANAGE_WEBHOOKS` permission. Returns the updated [webhook](#DOCS_RESOURCES_WEBHOOK/webhook-object) object on success. Fires a [Webhooks Update](#DOCS_EVENTS_GATEWAY_EVENTS/webhooks-update) Gateway event.
 
 > info
 > All parameters to this endpoint are optional
@@ -158,7 +170,7 @@ Same as above, except this call does not require authentication, does not accept
 
 ## Delete Webhook % DELETE /webhooks/{webhook.id#DOCS_RESOURCES_WEBHOOK/webhook-object}
 
-Delete a webhook permanently. Requires the `MANAGE_WEBHOOKS` permission. Returns a `204 No Content` response on success. Fires a [Webhooks Update](#DOCS_TOPICS_GATEWAY_EVENTS/webhooks-update) Gateway event.
+Delete a webhook permanently. Requires the `MANAGE_WEBHOOKS` permission. Returns a `204 No Content` response on success. Fires a [Webhooks Update](#DOCS_EVENTS_GATEWAY_EVENTS/webhooks-update) Gateway event.
 
 > info
 > This endpoint supports the `X-Audit-Log-Reason` header.
@@ -189,22 +201,22 @@ Refer to [Uploading Files](#DOCS_REFERENCE/uploading-files) for details on attac
 
 ###### JSON/Form Params
 
-| Field             | Type                                                                                 | Description                                                                                                                                                                                                         | Required                           |
-|-------------------|--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
-| content           | string                                                                               | the message contents (up to 2000 characters)                                                                                                                                                                        | one of content, file, embeds, poll |
-| username          | string                                                                               | override the default username of the webhook                                                                                                                                                                        | false                              |
-| avatar_url        | string                                                                               | override the default avatar of the webhook                                                                                                                                                                          | false                              |
-| tts               | boolean                                                                              | true if this is a TTS message                                                                                                                                                                                       | false                              |
-| embeds            | array of up to 10 [embed](#DOCS_RESOURCES_MESSAGE/embed-object) objects              | embedded `rich` content                                                                                                                                                                                             | one of content, file, embeds, poll |
-| allowed_mentions  | [allowed mention object](#DOCS_RESOURCES_MESSAGE/allowed-mentions-object)            | allowed mentions for the message                                                                                                                                                                                    | false                              |
-| components \*     | array of [message component](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object) | the components to include with the message                                                                                                                                                                          | false                              |
-| files[n] \*\*     | file contents                                                                        | the contents of the file being sent                                                                                                                                                                                 | one of content, file, embeds, poll |
-| payload_json \*\* | string                                                                               | JSON encoded body of non-file params                                                                                                                                                                                | `multipart/form-data` only         |
-| attachments \*\*  | array of partial [attachment](#DOCS_RESOURCES_MESSAGE/attachment-object) objects     | attachment objects with filename and description                                                                                                                                                                    | false                              |
-| flags             | integer                                                                              | [message flags](#DOCS_RESOURCES_MESSAGE/message-object-message-flags) combined as a [bitfield](https://en.wikipedia.org/wiki/Bit_field) (only `SUPPRESS_EMBEDS` and `SUPPRESS_NOTIFICATIONS` can be set can be set) | false                              |
-| thread_name       | string                                                                               | name of thread to create (requires the webhook channel to be a forum or media channel)                                                                                                                              | false                              |
-| applied_tags      | array of snowflakes                                                                  | array of tag ids to apply to the thread (requires the webhook channel to be a forum or media channel)                                                                                                               | false                              |
-| poll              | [poll](#DOCS_RESOURCES_POLL/poll-create-request-object) request object               | A poll!                                                                                                                                                                                                             | one of content, file, embeds, poll |
+| Field             | Type                                                                                 | Description                                                                                                                                                                                              | Required                           |
+|-------------------|--------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
+| content           | string                                                                               | the message contents (up to 2000 characters)                                                                                                                                                             | one of content, file, embeds, poll |
+| username          | string                                                                               | override the default username of the webhook                                                                                                                                                             | false                              |
+| avatar_url        | string                                                                               | override the default avatar of the webhook                                                                                                                                                               | false                              |
+| tts               | boolean                                                                              | true if this is a TTS message                                                                                                                                                                            | false                              |
+| embeds            | array of up to 10 [embed](#DOCS_RESOURCES_MESSAGE/embed-object) objects              | embedded `rich` content                                                                                                                                                                                  | one of content, file, embeds, poll |
+| allowed_mentions  | [allowed mention object](#DOCS_RESOURCES_MESSAGE/allowed-mentions-object)            | allowed mentions for the message                                                                                                                                                                         | false                              |
+| components \*     | array of [message component](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object) | the components to include with the message                                                                                                                                                               | false                              |
+| files[n] \*\*     | file contents                                                                        | the contents of the file being sent                                                                                                                                                                      | one of content, file, embeds, poll |
+| payload_json \*\* | string                                                                               | JSON encoded body of non-file params                                                                                                                                                                     | `multipart/form-data` only         |
+| attachments \*\*  | array of partial [attachment](#DOCS_RESOURCES_MESSAGE/attachment-object) objects     | attachment objects with filename and description                                                                                                                                                         | false                              |
+| flags             | integer                                                                              | [message flags](#DOCS_RESOURCES_MESSAGE/message-object-message-flags) combined as a [bitfield](https://en.wikipedia.org/wiki/Bit_field) (only `SUPPRESS_EMBEDS` and `SUPPRESS_NOTIFICATIONS` can be set) | false                              |
+| thread_name       | string                                                                               | name of thread to create (requires the webhook channel to be a forum or media channel)                                                                                                                   | false                              |
+| applied_tags      | array of snowflakes                                                                  | array of tag ids to apply to the thread (requires the webhook channel to be a forum or media channel)                                                                                                    | false                              |
+| poll              | [poll](#DOCS_RESOURCES_POLL/poll-create-request-object) request object               | A poll!                                                                                                                                                                                                  | one of content, file, embeds, poll |
 
 
 \* Requires an application-owned webhook.
@@ -278,10 +290,13 @@ Any provided files will be **appended** to the message. To remove or replace fil
 | files[n] \*\*     | file contents                                                                        | the contents of the file being sent/edited                      |
 | payload_json \*\* | string                                                                               | JSON encoded body of non-file params (multipart/form-data only) |
 | attachments \*\*  | array of partial [attachment](#DOCS_RESOURCES_MESSAGE/attachment-object) objects     | attached files to keep and possible descriptions for new files  |
+| poll \*\*\*       | [poll](#DOCS_RESOURCES_POLL/poll-create-request-object) request object               | A poll!                                                         |
 
 \* Requires an application-owned webhook.
 
 \*\* See [Uploading Files](#DOCS_REFERENCE/uploading-files) for details.
+
+\*\*\* Polls can only be added when editing a deferred interaction response.
 
 ## Delete Webhook Message % DELETE /webhooks/{webhook.id#DOCS_RESOURCES_WEBHOOK/webhook-object}/{webhook.token#DOCS_RESOURCES_WEBHOOK/webhook-object}/messages/{message.id#DOCS_RESOURCES_MESSAGE/message-object}
 

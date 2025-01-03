@@ -1,7 +1,8 @@
-# Activity Development Guides
+---
+sidebar_label: Development Guides
+---
 
-> preview
-> Creating Activities is currently available as a [Public Developer Preview](#DOCS_ACTIVITIES_OVERVIEW/public-developer-preview).
+# Activity Development Guides
 
 These guides include suggested development practices, SDK commands, and user flows for you to consider while building your Activity. These will help to provide your users with a consistent and clear experience while interacting with your application.
 
@@ -31,6 +32,9 @@ These guides include suggested development practices, SDK commands, and user flo
   </Card>
   <Card title="Open Share Moment Dialog" link="#DOCS_ACTIVITIES_DEVELOPMENT_GUIDES/open-share-moment-dialog">
     Open a dialog to share media from your application to a channel, DM, or GDM.
+  </Card>
+  <Card title="Setting Up an Entry Point Command" link="#DOCS_ACTIVITIES_DEVELOPMENT_GUIDES/setting-up-an-entry-point-command">
+    Configure a command that allows users to open your Activity from the App Launcher.
   </Card>
   <Card title="Encourage Hardware Acceleration" link="#DOCS_ACTIVITIES_DEVELOPMENT_GUIDES/encourage-hardware-acceleration">
     Open a dialog to enable hardware acceleration for compute-intensive applications.
@@ -87,6 +91,9 @@ These guides include suggested development practices, SDK commands, and user flo
   <Card title="Render Avatars and Names" link="#DOCS_ACTIVITIES_DEVELOPMENT_GUIDES/render-avatars-and-names">
     Retrieve and render the usernames and avatars of users connected to your application.
   </Card>
+  <Card title="Preventing Unwanted Activity Sessions" link="#DOCS_ACTIVITIES_DEVELOPMENT_GUIDES/preventing-unwanted-activity-sessions">
+    Validating activity sessions are via a Discord client before adding them to an instance's session.
+  </Card>
 </Container>
 
 ## Assets & Metadata
@@ -127,7 +134,7 @@ To run your locally hosted application, follow the instructions for [Launching y
 Although it is possible to test your application locally, we recommend developing and testing against the Discord proxy. This is helpful to make sure all URLs behave as expected before your application runs in production. One technique to enable testing locally against the proxy is to use a network tunneling tool, such as [cloudflared](https://github.com/cloudflare/cloudflared#installing-cloudflared). A typical pattern is for each developer to have their own "development-only" application. To set up a local environment to run through Discord's proxy, you will need to do the following:
 
 1. Create a new application in the Discord Developer portal.
-2. Enable the Developer Preview for Activities.
+2. Enable Activities for your app.
 3. Set up the application's [URL mapping](#DOCS_ACTIVITIES_DEVELOPMENT_GUIDES/url-mapping).
 4. Locally, spin up your web server.
 5. Install and run a tunnel solution, such as [cloudflared](https://github.com/cloudflare/cloudflared#installing-cloudflared). You will point it to your local web server.
@@ -161,8 +168,8 @@ Follow the instructions for [Launching your Application from the Discord Client]
 
 The flow for setting up your production application is very similar:
 
-1. If not made yet, create a new application
-2. Enable the Developer Preview for Activities.
+1. If not made yet, create a new application.
+2. Enable Activities for your app.
 3. Set up the application's [URL Mapping](#DOCS_ACTIVITIES_DEVELOPMENT_GUIDES/url-mapping). The URL for your application's html should be set to the `/` route.
 4. Follow the instructions for [Launching your Application from the Discord Client](#DOCS_ACTIVITIES_DEVELOPMENT_GUIDES/launch-your-application-from-the-discord-client)). Application URL Override should not be enabled.
 
@@ -202,9 +209,6 @@ Because your application is "sandboxed", it will be unable to make network reque
 
 #### How to set a URL Mapping
 
-> preview
-> This is only possible once the Developer Preview Activities is enabled on your application.
-
 To add or modify your application's URL mappings, click on `Activities -> URL Mappings` and set the prefix and target values for each mapping as needed.
 
 ![Configuring your URL Mapping](activities/url-mapping-tutorial.png)
@@ -216,6 +220,7 @@ To add or modify your application's URL mappings, click on `Activities -> URL Ma
   | PREFIX                | TARGET                   |
   |-----------------------|--------------------------|
   | `/google/{subdomain}` | `{subdomain}.google.com` |
+- Targets must point to a directory; setting a target to a file (e.g. `example.com/index.html`) is unsupported and may lead to unexpected behavior.
 - Because of how URL globbing works, if you have multiple prefix urls with the same initial path, you must place the shortest of the prefix paths last in order for each url mapping to be reachable. For example, if you have `/foo` and `/foo/bar`, you must place the url `/foo/bar` before `/foo` or else the mapping for `/foo/bar` will never be reached.
 
 | ✅ DO                                                 | ❌ DON'T                                                    |
@@ -416,6 +421,47 @@ User Experience
 
 ![share-moment-dialog](activities/share-moment-dialog-example.png)
 
+---
+
+### Setting Up an Entry Point Command
+
+An [Entry Point command](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/entry-point-commands) is required for users to be able to launch your Activity from the [App Launcher menu](https://support.discord.com/hc/articles/21334461140375-Using-Apps-on-Discord#h_01HRQSA6C8TRHS722P1H3HW1TV) in Discord.
+
+When you enable Activities in your [app's settings](http://discord.com/developers/applications), a [default Entry Point command](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/default-entry-point-command) is automatically created for your app. The default Entry Point command will use the `DISCORD_LAUNCH_ACTIVITY` (`2`) [handler type](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/application-command-object-entry-point-command-handler-types), which means that Discord automatically launches your Activity for the user and posts a follow-up message into the channel where it was launched from.
+
+If you want to handle sending messages yourself, you can update the handler to be `APP_HANDLER` (`1`). Details about Entry Point command handlers is in the [Entry Point command documentation](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/entry-point-handlers).
+
+#### Customizing the Default Entry Point Command
+
+Entry Point commands can be customized in the same way as other [commands](#DOCS_INTERACTIONS_APPLICATION_COMMANDS). Since Entry Point commands can only be [global](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/making-a-global-command), you'll use the HTTP endpoints for global  commands:
+- **Edit your existing Entry Point command's name or details** using the [Edit Global Application Command](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/edit-global-application-command) endpoint. If you don't know the ID for your app's Entry Point command, use the [Get Global Application Commands](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/get-global-application-commands) endpoint to retrieve it.
+- **Make a different (option-less) command your Entry Point command** by updating its [command `type`](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/application-command-object-application-command-types) to `PRIMARY_ENTRY_POINT` (type `4`). Your app can only have one Entry Point command, so if your app already has one, you must first [delete](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/delete-global-application-command) it or [update](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/edit-global-application-command) its [command `type`](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/application-command-object-application-command-types).
+
+#### Creating an Entry Point Command
+
+To create a new Entry Point command, you can call the [Create Global Application Command](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/create-global-application-command) endpoint and set the [command `type`](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/application-command-object-application-command-types) to `PRIMARY_ENTRY_POINT` (type `4`).
+
+Your command payload may look something like this:
+
+```json
+{
+  "name": "launch",
+  "description": "Launch Realms of Wumpus",
+  // PRIMARY_ENTRY_POINT is type 4
+  "type": 4,
+  // DISCORD_LAUNCH_ACTIVITY is handler value 2
+  "handler": 2,
+  // integration_types and contexts define where your command can be used (see below)
+  "integration_types": [0, 1],
+  "contexts": [0, 1, 2]
+}
+```
+
+In addition to the `type` and `handler` values, the command payload includes `integration_types` and `contexts` which let you configure when and where your command can be used:
+- `integration_types` defines the [installation contexts](#DOCS_RESOURCES_APPLICATION/installation-context) where your command is available (to a server, to a user's account, or both). If you don't set `integration_types` when creating a command, it will default to your app's [currently-supported installation contexts](#DOCS_RESOURCES_APPLICATION/setting-supported-installation-contexts).
+- `contexts` defines the [interaction contexts](#DOCS_INTERACTIONS_RECEIVING_AND_RESPONDING/interaction-object-interaction-context-types) where a command can be run in Discord (in a server, in a DM with your app, and/or in DMs and Group DMs with other users).
+
+Details about both of these fields are in the [command contexts](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/contexts) documentation.
 
 ---
 
@@ -606,15 +652,9 @@ export default function LayoutMode() {
 
 ### Activity Proxy Considerations
 
-All network traffic is routed through the Discord Proxy for various security reasons. The proxy does not support mapping targets to specific ports. Any mapping to specific ports will have to be handled by your application.
+All network traffic is routed through the Discord Proxy for various security reasons.
 
 Under the hood we utilize Cloudflare Workers, which brings some restrictions, outlined below.
-
-#### iframe Supported Ports
-When an activity's iframe makes a request (i.e. to https://&lt;app_id&gt;.discordsays.com), url port usage is limited to Cloudflare's list of supported ports as shown [here](https://developers.cloudflare.com/fundamentals/reference/network-ports/#network-ports-compatible-with-cloudflares-proxy).
-
-#### Url Mapping Target Supported Ports
-At this time, URL mapping targets do not support external url ports. This is a [known issue](https://developers.cloudflare.com/workers/platform/known-issues/#custom-ports) of Cloudflare workers.
 
 #### WebTransport
 
@@ -836,6 +876,29 @@ This example is being done entirely on the client, however, a more common patter
 - Store the user's access token on the application server
 - Retrieve the user's guild-specific avatar and nickname via the application's server
 - Serve all of the application's avatar/nicknames via the application's server
+
+---
+
+### Preventing unwanted activity sessions
+
+Activities are surfaced through iframes in the Discord app. The activity website itself is publicly reachable at `<application_id>.discordsays.com`. Activities will expect to be able to communicate with Discord's web or mobile client via the Discord SDK's RPC protocol. If a user loads the activity's website in a normal browser, the Discord RPC server will not be present, and the activity will likely fail in some way.
+
+It is theoretically possible for a malicious client to mock Discord's RPC protocol or load one activity website when launching another. Because the activity is loaded inside Discord, the RPC protocol is active, and the activity is none the wiser.
+
+To enable an activity to "lock down" activity access, we encourage utilizing the `get_activity_instance` API, found at `discord.com/api/applications/<application_id>/activity-instances/<instance_id>'`. The route requires a Bot token of the application. It returns a serialized active activity instance for the given application, if found, otherwise it returns a 404. Here are two example responses:
+
+```javascript
+curl https://discord.com/api/applications/1215413995645968394/activity-instances/i-1234567890-gc-912952092627435520-912954213460484116 -H 'Authorization: Bot <bot token>'
+{"message": "404: Not Found", "code": 0}
+
+curl https://discord.com/api/applications/1215413995645968394/activity-instances/i-1276580072400224306-gc-912952092627435520-912954213460484116 -H 'Authorization: Bot <bot token>'
+{"application_id":"1215413995645968394","instance_id":"i-1276580072400224306-gc-912952092627435520-912954213460484116","launch_id":"1276580072400224306","location":{"id":"gc-912952092627435520-912954213460484116","kind":"gc","channel_id":"912954213460484116","guild_id":"912952092627435520"},"users":["205519959982473217"]}
+```
+
+With this API, the activity's backend can verify that a client is in fact in an instance of that activity before allowing the client to participate in any meaningful gameplay. How an activity implements "session verification" is left to the developer's discretion. The solution can be as granular as gating specific features or as binary as not returning the activity HTML except for valid sessions.
+
+In the below flow diagram, we show how the server can deliver the activity website, only for valid users in a valid activity instance:
+![application-test-mode-prod](activities/activity-instance-validation.jpg)
 
 ---
 

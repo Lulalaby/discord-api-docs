@@ -1,3 +1,7 @@
+---
+sidebar_label: Sticker
+---
+
 # Sticker Resource
 
 ### Sticker Object
@@ -13,7 +17,6 @@ Represents a sticker that can be sent in messages.
 | name        | string                                          | name of the sticker                                                                   |
 | description | ?string                                         | description of the sticker                                                            |
 | tags\*      | string                                          | autocomplete/suggestion tags for the sticker (max 200 characters)                     |
-| asset?      | string                                          | **Deprecated** previously the sticker asset hash, now an empty string                 |
 | type        | integer                                         | [type of sticker](#DOCS_RESOURCES_STICKER/sticker-object-sticker-types)               |
 | format_type | integer                                         | [type of sticker format](#DOCS_RESOURCES_STICKER/sticker-object-sticker-format-types) |
 | available?  | boolean                                         | whether this guild sticker can be used, may be false due to loss of Server Boosts     |
@@ -50,7 +53,6 @@ Incidentally the client will always use a name generated from an emoji as the va
   "type": 1,
   "format_type": 3,
   "description": "Wumpus waves hello",
-  "asset": "",
   "pack_id": "847199849233514549",
   "sort_value": 12
 }
@@ -126,7 +128,7 @@ Returns a [sticker](#DOCS_RESOURCES_STICKER/sticker-object) object for the given
 
 ## Create Guild Sticker % POST /guilds/{guild.id#DOCS_RESOURCES_GUILD/guild-object}/stickers
 
-Create a new sticker for the guild. Send a `multipart/form-data` body. Requires the `CREATE_GUILD_EXPRESSIONS` permission. Returns the new [sticker](#DOCS_RESOURCES_STICKER/sticker-object) object on success. Fires a [Guild Stickers Update](#DOCS_TOPICS_GATEWAY_EVENTS/guild-stickers-update) Gateway event.
+Create a new sticker for the guild. Send a `multipart/form-data` body. Requires the `CREATE_GUILD_EXPRESSIONS` permission. Returns the new [sticker](#DOCS_RESOURCES_STICKER/sticker-object) object on success. Fires a [Guild Stickers Update](#DOCS_EVENTS_GATEWAY_EVENTS/guild-stickers-update) Gateway event.
 
 Every guilds has five free sticker slots by default, and each Boost level will grant access to more slots.
 
@@ -150,7 +152,7 @@ Every guilds has five free sticker slots by default, and each Boost level will g
 
 ## Modify Guild Sticker % PATCH /guilds/{guild.id#DOCS_RESOURCES_GUILD/guild-object}/stickers/{sticker.id#DOCS_RESOURCES_STICKER/sticker-object}
 
-Modify the given sticker. For stickers created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other stickers, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated [sticker](#DOCS_RESOURCES_STICKER/sticker-object) object on success. Fires a [Guild Stickers Update](#DOCS_TOPICS_GATEWAY_EVENTS/guild-stickers-update) Gateway event.
+Modify the given sticker. For stickers created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other stickers, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated [sticker](#DOCS_RESOURCES_STICKER/sticker-object) object on success. Fires a [Guild Stickers Update](#DOCS_EVENTS_GATEWAY_EVENTS/guild-stickers-update) Gateway event.
 
 > info
 > All parameters to this endpoint are optional.
@@ -168,7 +170,7 @@ Modify the given sticker. For stickers created by the current user, requires eit
 
 ## Delete Guild Sticker % DELETE /guilds/{guild.id#DOCS_RESOURCES_GUILD/guild-object}/stickers/{sticker.id#DOCS_RESOURCES_STICKER/sticker-object}
 
-Delete the given sticker. For stickers created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other stickers, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a [Guild Stickers Update](#DOCS_TOPICS_GATEWAY_EVENTS/guild-stickers-update) Gateway event.
+Delete the given sticker. For stickers created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other stickers, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a [Guild Stickers Update](#DOCS_EVENTS_GATEWAY_EVENTS/guild-stickers-update) Gateway event.
 
 > info
 > This endpoint supports the `X-Audit-Log-Reason` header.

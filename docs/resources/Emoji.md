@@ -1,3 +1,7 @@
+---
+sidebar_label: Emoji
+---
+
 # Emoji Resource
 
 > warn
@@ -24,6 +28,13 @@ Roles with the `integration_id` tag being the guild's guild_subscription integra
 An emoji cannot have both subscription roles and non-subscription roles.  
 Emojis with subscription roles are considered premium emoji, and count toward a separate limit of 25.  
 Emojis cannot be converted between normal and premium after creation.
+
+###### Application-Owned Emoji
+
+An application can own up to 2000 emojis that can only be used by that app.
+App emojis can be managed using the API with a bot token, or using the app's settings in the portal.
+The `USE_EXTERNAL_EMOJIS` permission is not required to use app emojis.
+The `user` field of an app emoji object represents the team member that uploaded the emoji from the app's settings, or the bot user if uploaded using the API.
 
 ###### Emoji Example
 
@@ -87,7 +98,7 @@ Returns an [emoji](#DOCS_RESOURCES_EMOJI/emoji-object) object for the given guil
 
 ## Create Guild Emoji % POST /guilds/{guild.id#DOCS_RESOURCES_GUILD/guild-object}/emojis
 
-Create a new emoji for the guild. Requires the `CREATE_GUILD_EXPRESSIONS` permission. Returns the new [emoji](#DOCS_RESOURCES_EMOJI/emoji-object) object on success. Fires a [Guild Emojis Update](#DOCS_TOPICS_GATEWAY_EVENTS/guild-emojis-update) Gateway event.
+Create a new emoji for the guild. Requires the `CREATE_GUILD_EXPRESSIONS` permission. Returns the new [emoji](#DOCS_RESOURCES_EMOJI/emoji-object) object on success. Fires a [Guild Emojis Update](#DOCS_EVENTS_GATEWAY_EVENTS/guild-emojis-update) Gateway event.
 
 > warn
 > Emojis and animated emojis have a maximum file size of 256 KiB. Attempting to upload an emoji larger than this limit will fail and return 400 Bad Request and an error message, but not a [JSON status code](#DOCS_TOPICS_OPCODES_AND_STATUS_CODES/json).
@@ -105,7 +116,7 @@ Create a new emoji for the guild. Requires the `CREATE_GUILD_EXPRESSIONS` permis
 
 ## Modify Guild Emoji % PATCH /guilds/{guild.id#DOCS_RESOURCES_GUILD/guild-object}/emojis/{emoji.id#DOCS_RESOURCES_EMOJI/emoji-object}
 
-Modify the given emoji. For emojis created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other emojis, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated [emoji](#DOCS_RESOURCES_EMOJI/emoji-object) object on success. Fires a [Guild Emojis Update](#DOCS_TOPICS_GATEWAY_EVENTS/guild-emojis-update) Gateway event.
+Modify the given emoji. For emojis created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other emojis, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated [emoji](#DOCS_RESOURCES_EMOJI/emoji-object) object on success. Fires a [Guild Emojis Update](#DOCS_EVENTS_GATEWAY_EVENTS/guild-emojis-update) Gateway event.
 
 > info
 > All parameters to this endpoint are optional.
@@ -122,7 +133,7 @@ Modify the given emoji. For emojis created by the current user, requires either 
 
 ## Delete Guild Emoji % DELETE /guilds/{guild.id#DOCS_RESOURCES_GUILD/guild-object}/emojis/{emoji.id#DOCS_RESOURCES_EMOJI/emoji-object}
 
-Delete the given emoji. For emojis created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other emojis, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a [Guild Emojis Update](#DOCS_TOPICS_GATEWAY_EVENTS/guild-emojis-update) Gateway event.
+Delete the given emoji. For emojis created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other emojis, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a [Guild Emojis Update](#DOCS_EVENTS_GATEWAY_EVENTS/guild-emojis-update) Gateway event.
 
 > info
 > This endpoint supports the `X-Audit-Log-Reason` header.

@@ -1,6 +1,10 @@
+---
+sidebar_label: Application
+---
+
 # Application Resource
 
-[Applications](#DOCS_QUICK_START_OVERVIEW_OF_APPS) (or "apps") are containers for developer platform features, and can be installed to Discord servers and/or user accounts. 
+[Applications](#DOCS_QUICK_START_OVERVIEW_OF_APPS) (or "apps") are containers for developer platform features, and can be installed to Discord servers and/or user accounts.
 
 ### Application Object
 
@@ -19,7 +23,6 @@
 | terms_of_service_url?              | string                                                                                                                                | URL of the app's Terms of Service                                                                                                                                                                                                          |
 | privacy_policy_url?                | string                                                                                                                                | URL of the app's Privacy Policy                                                                                                                                                                                                            |
 | owner?                             | partial [user](#DOCS_RESOURCES_USER/user-object) object                                                                               | Partial user object for the owner of the app                                                                                                                                                                                               |
-| summary *(deprecated)*             | string                                                                                                                                | **deprecated and will be removed in v11.** An empty string.                                                                                                                                                                                |
 | verify_key                         | string                                                                                                                                | Hex encoded key for verification in interactions and the GameSDK's [GetTicket](https://github.com/discord/discord-api-docs/blob/legacy-gamesdk/docs/game_sdk/Applications.md#getticket)                                                    |
 | team                               | ?[team](#DOCS_TOPICS_TEAMS/data-models-team-object) object                                                                            | If the app belongs to a team, this will be a list of the members of that team                                                                                                                                                              |
 | guild_id?                          | snowflake                                                                                                                             | Guild associated with the app. For example, a developer support server.                                                                                                                                                                    |
@@ -31,8 +34,11 @@
 | approximate_guild_count?           | integer                                                                                                                               | Approximate count of guilds the app has been added to                                                                                                                                                                                      |
 | approximate_user_install_count?    | integer                                                                                                                               | Approximate count of users that have installed the app                                                                                                                                                                                     |
 | redirect_uris?                     | array of strings                                                                                                                      | Array of redirect URIs for the app                                                                                                                                                                                                         |
-| interactions_endpoint_url?         | string                                                                                                                                | [Interactions endpoint URL](#DOCS_INTERACTIONS_RECEIVING_AND_RESPONDING/receiving-an-interaction) for the app                                                                                                                              |
-| role_connections_verification_url? | string                                                                                                                                | Role connection verification URL for the app                                                                                                                                                                                               |
+| interactions_endpoint_url?         | ?string                                                                                                                               | [Interactions endpoint URL](#DOCS_INTERACTIONS_RECEIVING_AND_RESPONDING/receiving-an-interaction) for the app                                                                                                                              |
+| role_connections_verification_url? | ?string                                                                                                                               | Role connection verification URL for the app                                                                                                                                                                                               |
+| event_webhooks_url?                | ?string                                                                                                                               | [Event webhooks URL](#DOCS_EVENTS_WEBHOOK_EVENTS/preparing-for-events) for the app to receive webhook events                                                                                                                               |
+| event_webhooks_status              | [application event webhook status](#DOCS_RESOURCES_APPLICATION/application-object-application-event-webhook-status)                   | If [webhook events](#DOCS_EVENTS_WEBHOOK_EVENTS) are enabled for the app. `1` (default) means disabled, `2` means enabled, and `3` means disabled by Discord                                                                               |
+| event_webhooks_types?              | array of strings                                                                                                                      | List of [Webhook event types](#DOCS_EVENTS_WEBHOOK_EVENTS/event-types) the app subscribes to                                                                                                                                               |
 | tags?                              | array of strings                                                                                                                      | List of tags describing the content and functionality of the app. Max of 5 tags.                                                                                                                                                           |
 | install_params?                    | [install params](#DOCS_RESOURCES_APPLICATION/install-params-object) object                                                            | Settings for the app's default in-app authorization link, if enabled                                                                                                                                                                       |
 | integration_types_config?          | dictionary with keys of [application integration types](#DOCS_RESOURCES_APPLICATION/application-object-application-integration-types) | Default scopes and permissions for each supported installation context. Value for each key is an [integration type configuration object](#DOCS_RESOURCES_APPLICATION/application-object-application-integration-type-configuration-object) |
@@ -67,8 +73,12 @@
         "permissions": "0"
       }
     }
-  }
+  },
   "name": "Baba O-Riley",
+  "interactions_endpoint_url": null,
+  "role_connections_verification_url": null,
+  "event_webhooks_url": null,
+  "event_webhooks_status": 1,
   "owner": {
     "avatar": null,
     "discriminator": "1738",
@@ -78,7 +88,6 @@
   },
   "primary_sku_id": "172150183260323840",
   "slug": "test",
-  "summary": "",
   "team": {
     "icon": "dd9b7dcfdf5351b9c3de0fe167bacbe1",
     "id": "531992624043786253",
@@ -115,15 +124,25 @@ Where an app can be installed, also called its supported [installation contexts]
 |------------------------|----------------------------------------------------------------------------|----------------------------------------------------------------------------------|
 | oauth2_install_params? | [install params object](#DOCS_RESOURCES_APPLICATION/install-params-object) | Install params for each installation context's default in-app authorization link |
 
+###### Application Event Webhook Status
+
+Status indicating whether event webhooks are enabled or disabled for an application.
+
+| Name                  | Value | Description                                                       |
+|-----------------------|-------|-------------------------------------------------------------------|
+| `DISABLED`            | `1`   | Webhook events are disabled by developer                          |
+| `ENABLED`             | `2`   | Webhook events are enabled by developer                           |
+| `DISABLED_BY_DISCORD` | `3`   | Webhook events are disabled by Discord, usually due to inactivity |
+
 ###### Application Flags
 
 | Value     | Name                                          | Description                                                                                                                                                                                                                                                   |
 |-----------|-----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `1 << 6`  | APPLICATION_AUTO_MODERATION_RULE_CREATE_BADGE | Indicates if an app uses the [Auto Moderation API](#DOCS_RESOURCES_AUTO_MODERATION)                                                                                                                                                                           |
-| `1 << 12` | GATEWAY_PRESENCE                              | Intent required for bots in **100 or more servers** to receive [`presence_update` events](#DOCS_TOPICS_GATEWAY_EVENTS/presence-update)                                                                                                                        |
-| `1 << 13` | GATEWAY_PRESENCE_LIMITED                      | Intent required for bots in under 100 servers to receive [`presence_update` events](#DOCS_TOPICS_GATEWAY_EVENTS/presence-update), found on the **Bot** page in your app's settings                                                                            |
-| `1 << 14` | GATEWAY_GUILD_MEMBERS                         | Intent required for bots in **100 or more servers** to receive member-related events like `guild_member_add`. See the list of member-related events [under `GUILD_MEMBERS`](#DOCS_TOPICS_GATEWAY/list-of-intents)                                             |
-| `1 << 15` | GATEWAY_GUILD_MEMBERS_LIMITED                 | Intent required for bots in under 100 servers to receive member-related events like `guild_member_add`, found on the **Bot** page in your app's settings. See the list of member-related events [under `GUILD_MEMBERS`](#DOCS_TOPICS_GATEWAY/list-of-intents) |
+| `1 << 12` | GATEWAY_PRESENCE                              | Intent required for bots in **100 or more servers** to receive [`presence_update` events](#DOCS_EVENTS_GATEWAY_EVENTS/presence-update)                                                                                                                        |
+| `1 << 13` | GATEWAY_PRESENCE_LIMITED                      | Intent required for bots in under 100 servers to receive [`presence_update` events](#DOCS_EVENTS_GATEWAY_EVENTS/presence-update), found on the **Bot** page in your app's settings                                                                            |
+| `1 << 14` | GATEWAY_GUILD_MEMBERS                         | Intent required for bots in **100 or more servers** to receive member-related events like `guild_member_add`. See the list of member-related events [under `GUILD_MEMBERS`](#DOCS_EVENTS_GATEWAY/list-of-intents)                                             |
+| `1 << 15` | GATEWAY_GUILD_MEMBERS_LIMITED                 | Intent required for bots in under 100 servers to receive member-related events like `guild_member_add`, found on the **Bot** page in your app's settings. See the list of member-related events [under `GUILD_MEMBERS`](#DOCS_EVENTS_GATEWAY/list-of-intents) |
 | `1 << 16` | VERIFICATION_PENDING_GUILD_LIMIT              | Indicates unusual growth of an app that prevents verification                                                                                                                                                                                                 |
 | `1 << 17` | EMBEDDED                                      | Indicates if an app is embedded within the Discord client (currently unavailable publicly)                                                                                                                                                                    |
 | `1 << 18` | GATEWAY_MESSAGE_CONTENT                       | Intent required for bots in **100 or more servers** to receive [message content](https://support-dev.discord.com/hc/en-us/articles/4404772028055)                                                                                                             |
@@ -210,9 +229,9 @@ Returns the [application](#DOCS_RESOURCES_APPLICATION/application-object) object
 
 ## Edit Current Application % PATCH /applications/@me
 
-Edit properties of the app associated with the requesting bot user. Only properties that are passed will be updated. Returns the updated [application](#DOCS_RESOURCES_APPLICATION/application-object) object on success. 
+Edit properties of the app associated with the requesting bot user. Only properties that are passed will be updated. Returns the updated [application](#DOCS_RESOURCES_APPLICATION/application-object) object on success.
 
-> info 
+> info
 > All parameters to this endpoint are optional
 
 ###### JSON Params
@@ -229,7 +248,62 @@ Edit properties of the app associated with the requesting bot user. Only propert
 | cover_image                       | ?[image data](#DOCS_REFERENCE/image-data)                                                                                             | Default rich presence invite cover image for the app                                                                                                                                                                                       |
 | interactions_endpoint_url \*\*    | string                                                                                                                                | [Interactions endpoint URL](#DOCS_INTERACTIONS_RECEIVING_AND_RESPONDING/receiving-an-interaction) for the app                                                                                                                              |
 | tags                              | array of strings                                                                                                                      | List of tags describing the content and functionality of the app (max of 20 characters per tag). Max of 5 tags.                                                                                                                            |
+| event_webhooks_url                | string                                                                                                                                | [Event webhooks URL](#DOCS_EVENTS_WEBHOOK_EVENTS/preparing-for-events) for the app to receive webhook events                                                                                                                               |
+| event_webhooks_status             | [application event webhook status](#DOCS_RESOURCES_APPLICATION/application-object-application-event-webhook-status)                   | If [webhook events](#DOCS_EVENTS_WEBHOOK_EVENTS) are enabled for the app. `1` to disable, and `2` to enable                                                                                                                                |
+| event_webhooks_types              | array of strings                                                                                                                      | List of [Webhook event types](#DOCS_EVENTS_WEBHOOK_EVENTS/event-types) to subscribe to                                                                                                                                                     |
 
 \* Only limited intent flags (`GATEWAY_PRESENCE_LIMITED`, `GATEWAY_GUILD_MEMBERS_LIMITED`, and `GATEWAY_MESSAGE_CONTENT_LIMITED`) can be updated via the API.
 
 \*\* To update an Interactions endpoint URL via the API, the URL must be valid according to the [Receiving an Interaction](#DOCS_INTERACTIONS_RECEIVING_AND_RESPONDING/receiving-an-interaction) documentation.
+
+## Get Application Activity Instance % GET /applications/{application.id#DOCS_RESOURCES_APPLICATION/application-object}/activity-instances/{instance_id}
+
+Returns a serialized activity instance, if it exists. Useful for [preventing unwanted activity sessions](#DOCS_ACTIVITIES_DEVELOPMENT_GUIDES/preventing-unwanted-activity-sessions).
+
+
+###### Example Activity Instance
+
+```json
+{
+  "application_id": "1215413995645968394",
+  "instance_id": "i-1276580072400224306-gc-912952092627435520-912954213460484116",
+  "launch_id": "1276580072400224306",
+  "location": {
+    "id": "gc-912952092627435520-912954213460484116",
+    "kind": "gc",
+    "channel_id": "912954213460484116",
+    "guild_id": "912952092627435520"
+  },
+  "users": ["205519959982473217"],
+}
+```
+
+###### Activity Instance Object
+
+| Field          | Type                                                                                                        | Description                                                                              |
+|----------------|-------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| application_id | snowflake                                                                                                   | [Application](#DOCS_RESOURCES_APPLICATION/application-object) ID                         |
+| instance_id    | string                                                                                                      | Activity [Instance](#DOCS_ACTIVITIES_DEVELOPMENT_GUIDES/activity-instance-management) ID |
+| launch_id      | snowflake                                                                                                   | Unique identifier for the launch                                                         |
+| location       | [Activity Location](#DOCS_RESOURCES_APPLICATION/get-application-activity-instance-activity-location-object) | Location the instance is runnning in                                                     |
+| users          | array of snowflakes, [user](#DOCS_RESOURCES_USER/user-object) IDs                                           | IDs of the Users currently connected to the instance                                     |
+
+
+
+###### Activity Location Object
+
+The Activity Location is an object that describes the location in which an activity instance is running.
+
+| Field      | Type                                                                                                                     | Description                                                 |
+|------------|--------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
+| id         | string                                                                                                                   | Unique identifier for the location                          |
+| kind       | [Activity Location Kind Enum](#DOCS_RESOURCES_APPLICATION/get-application-activity-instance-activity-location-kind-enum) | Enum describing kind of location                            |
+| channel_id | snowflake                                                                                                                | ID of the [Channel](#DOCS_RESOURCES_CHANNEL/channel-object) |
+| guild_id?  | ?snowflake                                                                                                               | ID of the [Guild](#DOCS_RESOURCES_GUILD/guild-object)       |
+
+###### Activity Location Kind Enum
+
+| Enum | Description                                        |
+|------|----------------------------------------------------|
+| 'gc' | Location is a Guild Channel                        |
+| 'pc' | Location is a Private Channel, such as a DM or GDM |
