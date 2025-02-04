@@ -12,16 +12,25 @@ Components are a field on the [message object](#DOCS_RESOURCES_MESSAGE/message-o
 
 ###### Component Types
 
-| Type | Name               | Description                                       |
-|------|--------------------|---------------------------------------------------|
-| 1    | Action Row         | Container for other components                    |
-| 2    | Button             | Button object                                     |
-| 3    | String Select      | Select menu for picking from defined text options |
-| 4    | Text Input         | Text input object                                 |
-| 5    | User Select        | Select menu for users                             |
-| 6    | Role Select        | Select menu for roles                             |
-| 7    | Mentionable Select | Select menu for mentionables (users *and* roles)  |
-| 8    | Channel Select     | Select menu for channels                          |
+| Type | Name               | Description                                       | Version\* |
+|------|--------------------|---------------------------------------------------|-----------|
+| 1    | Action Row         | Container for other components                    | 1, 2      |
+| 2    | Button             | Button object                                     | 1, 2      |
+| 3    | String Select      | Select menu for picking from defined text options | 1, 2      |
+| 4    | Text Input         | Text input object                                 | 1, 2      |
+| 5    | User Select        | Select menu for users                             | 1, 2      |
+| 6    | Role Select        | Select menu for roles                             | 1, 2      |
+| 7    | Mentionable Select | Select menu for mentionables (users *and* roles)  | 1, 2      |
+| 8    | Channel Select     | Select menu for channels                          | 1, 2      |
+| 9    | Section            | Section component                                 | 2         |
+| 10   | Text Display       | Text display component                            | 2         |
+| 11   | Thumbnail          | Thumbnail component for a section component       | 2         |
+| 12   | Media Gallery      | Media gallery component                           | 2         |
+| 13   | File               | File display component                            | 2         |
+| 14   | Separator          | Separator component                               | 2         |
+| 17   | Container          | Container for other components                    | 2         |
+
+\* Using `v2` components requires setting the [message flag](#DOCS_RESOURCES_MESSAGE/message-object-message-flags) `1 << 15`.
 
 The structure of each component type is described in detail below.
 
@@ -618,3 +627,98 @@ When defining a text input component, you can set attributes to customize the be
     "version": 1
 }
 ```
+
+### Section Object
+
+###### Section Structure
+
+| Field      | Type                                                                                                              | Description                                                                                                                                                         |
+|------------|-------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| type       | integer                                                                                                           | `9` for a section component                                                                                                                                         |
+| components | array of [text display objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/text-display-object-text-display-structure) | Array of text display components                                                                                                                                    |
+| accessory  | component                                                                                                         | An accessory component, can be [Thumbnail](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/thumbnail-object) or [Button](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/button-object) |
+
+### Text Display Object
+
+###### Text Display Structure
+
+| Field   | Type    | Description                               |
+|---------|---------|-------------------------------------------|
+| type    | integer | `10` for a text display component         |
+| content | string  | The content of the text display component |
+
+### Thumbnail Object
+
+###### Thumbnail Structure
+
+| Field        | Type                                                                                           | Description                                         |
+|--------------|------------------------------------------------------------------------------------------------|-----------------------------------------------------|
+| type         | integer                                                                                        | `11` for a thumbnail component                      |
+| media        | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | Media item for the thumbnail                        |
+| description? | string                                                                                         | Description for the thumbnail (max 1024 characters) |
+| spoiler?     | boolean                                                                                        | Whether the thumbnail is a spoiler                  |
+
+### Media Gallery Object
+
+###### Media Gallery Structure
+
+| Field | Type                                                                                                                           | Description                        |
+|-------|--------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
+| type  | integer                                                                                                                        | `12` for a media gallery component |
+| items | array of [media gallery item objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/media-gallery-object-media-gallery-item-structure) | Array of media gallery items       |
+
+###### Media Gallery Item Structure
+
+| Field        | Type                                                                                           | Description                                            |
+|--------------|------------------------------------------------------------------------------------------------|--------------------------------------------------------|
+| media        | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | Media item for the gallery                             |
+| description? | string                                                                                         | Description for the gallery item (max 1024 characters) |
+| spoiler?     | boolean                                                                                        | Whether the gallery item is a spoiler                  |
+
+### File Object
+
+###### File Structure
+
+| Field    | Type                                                                                           | Description                                                                  |
+|----------|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| type     | integer                                                                                        | `13` for a file component                                                    |
+| file     | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | The file to be displayed, supports only `attachment://<filename>` references |
+| spoiler? | boolean                                                                                        | Whether the file is a spoiler                                                |
+
+### Separator Object
+
+###### Separator Structure
+
+| Field    | Type                                                                                                    | Description                        |
+|----------|---------------------------------------------------------------------------------------------------------|------------------------------------|
+| type     | integer                                                                                                 | `14` for a separator component     |
+| divider? | boolean                                                                                                 | Whether the separator is a divider |
+| spacing? | [seperator spacing size](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/separator-object-separator-spacing-size) | Spacing size for the separator     |
+
+###### Separator Spacing Size
+
+| Size  | Value | Description        |
+|-------|-------|--------------------|
+| SMALL | 1     | Small spacing size |
+| LARGE | 2     | Large spacing size |
+
+### Container Object
+
+###### Container Structure
+
+| Field         | Type                                                                                 | Description                                                                                                                 |
+|---------------|--------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| type          | integer                                                                              | `17` for a container                                                                                                        |
+| accent_color? | integer                                                                              | Color code for the container                                                                                                |
+| spoiler?      | boolean                                                                              | Whether the container is a spoiler                                                                                          |
+| components    | array of [component objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object) | Can be of [type](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object-component-types) `1`, `9`, `10`, `12`, `13` or `14` |
+
+
+
+### Unfurled Media Item Object
+
+###### Unfurled Media Item Structure
+
+| Field | Type   | Description                                                      |
+|-------|--------|------------------------------------------------------------------|
+| url   | string | Supports arbitrary URLs and `attachment://<filename>` references |
