@@ -10,34 +10,56 @@ Components are a field on the [message object](#DOCS_RESOURCES_MESSAGE/message-o
 
 ### Component Object
 
-###### Component Types
-
-| Type | Name               | Description                                       |
-|------|--------------------|---------------------------------------------------|
-| 1    | Action Row         | Container for other components                    |
-| 2    | Button             | Button object                                     |
-| 3    | String Select      | Select menu for picking from defined text options |
-| 4    | Text Input         | Text input object                                 |
-| 5    | User Select        | Select menu for users                             |
-| 6    | Role Select        | Select menu for roles                             |
-| 7    | Mentionable Select | Select menu for mentionables (users *and* roles)  |
-| 8    | Channel Select     | Select menu for channels                          |
-
-The structure of each component type is described in detail below.
-
-###### Example Component
+###### Component Example
 
 ```json
 {
     "content": "This is a message with components",
     "components": [
         {
+            "id": 1,
             "type": 1,
             "components": []
         }
     ]
 }
 ```
+
+###### Base Component Structure
+| Field      | Type    | Description                                                                                 |
+|------------|---------|---------------------------------------------------------------------------------------------|
+| id?\* \*\* | integer | Unique identifier for the component; auto populated through increment if not provided.      |
+| type       | integer | [Type](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object-component-types) of component |
+
+\* `id` is optional when sending a message, but will always be present when received.
+\*\* Auto population starts at `1` and you are not able to define `0` as the id.
+
+###### Component Types
+
+| Type | Name                    | Description                                       | Version\* | Top Level | Interactive\*\* |
+|------|-------------------------|---------------------------------------------------|-----------|-----------|-----------------|
+| 1    | Action Row              | Container for other components                    | 1, 2      | Yes       | No              |
+| 2    | Button                  | Button object                                     | 1, 2      | No        | Yes             |
+| 3    | String Select           | Select menu for picking from defined text options | 1, 2      | No        | Yes             |
+| 4    | Text Input              | Text input object                                 | 1, 2      | No        | Yes             |
+| 5    | User Select             | Select menu for users                             | 1, 2      | No        | Yes             |
+| 6    | Role Select             | Select menu for roles                             | 1, 2      | No        | Yes             |
+| 7    | Mentionable Select      | Select menu for mentionables (users *and* roles)  | 1, 2      | No        | Yes             |
+| 8    | Channel Select          | Select menu for channels                          | 1, 2      | No        | Yes             |
+| 9    | Section                 | Section component                                 | 2         | Yes       | No              |
+| 10   | Text Display            | Text display component                            | 2         | Yes       | No              |
+| 11   | Thumbnail               | Thumbnail component for a section component       | 2         | No        | No              |
+| 12   | Media Gallery           | Media gallery component                           | 2         | Yes       | No              |
+| 13   | File                    | File display component                            | 2         | Yes       | No              |
+| 14   | Separator               | Separator component                               | 2         | Yes       | No              |
+| 16   | Content Inventory Entry | Cannot be used by bots                            | 1, 2      | Yes       | No              |
+| 17   | Container               | Container for other components                    | 2         | Yes       | No              |
+
+\* Using `v2` components requires setting the [message flag](#DOCS_RESOURCES_MESSAGE/message-object-message-flags) `1 << 15`. Setting the flag will disable the ability to set the `content` and `embeds` field and therefore will throw `Invalid Form Body` if either is sent.
+
+\*\* Interactive components send interactions and require a `custom_id` field.
+
+The structure of each component type is described in detail below.
 
 ## Action Rows
 
@@ -46,14 +68,20 @@ An Action Row is a non-interactive container component for other types of compon
 - You can have up to 5 Action Rows per message
 - An Action Row cannot contain another Action Row
 
+### Action Row Object
+
+###### Action Row Example
+
 ```json
 {
     "content": "This is a message with components",
     "components": [
         {
+            "id": 1,
             "type": 1,
             "components": [
                 {
+                    "id": 2,
                     "type": 2,
                     "label": "Click me!",
                     "style": 1,
@@ -66,13 +94,21 @@ An Action Row is a non-interactive container component for other types of compon
 }
 ```
 
+###### Action Row Structure
+
+| Field      | Type                                                                                 | Description                                                                                                                            |
+|------------|--------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| id?        | integer                                                                              | Unique identifier for the component; auto populated through increment if not provided.                                                 |
+| type       | integer                                                                              | `1` for an action row                                                                                                                  |
+| components | array of [component objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object) | Can be of [type](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object-component-types) `2`, `3`, `4`, `5`, `6`, `7` or `8`; max of 5 |
+
 ## Responding to a Component Interaction
 
 Responding to a user interacting with a component is the same as other interaction types, like application commands. You can simply ACK the request, send a followup message, or edit the original message to something new. Check out [Responding to An Interaction](#DOCS_INTERACTIONS_RECEIVING_AND_RESPONDING/responding-to-an-interaction) and [interaction response](#DOCS_INTERACTIONS_RECEIVING_AND_RESPONDING/interaction-response-object) for more.
 
 ## Custom ID
 
-Components, aside from Action Rows, must have a `custom_id` field. This field is defined by the developer when sending the component payload, and is returned in the interaction payload sent when a user interacts with the component. For example, if you set `custom_id: click_me` on a button, you'll receive an interaction containing `custom_id: click_me` when a user clicks that button.
+Interactive components, must have a `custom_id` field. This field is defined by the developer when sending the component payload, and is returned in the interaction payload sent when a user interacts with the component. For example, if you set `custom_id: click_me` on a button, you'll receive an interaction containing `custom_id: click_me` when a user clicks that button.
 
 `custom_id` must be unique per component; multiple buttons on the same message must not share the same `custom_id`. This field is a string of max 100 characters, and can be used flexibly to maintain state or pass through other important data.
 
@@ -90,6 +126,7 @@ Buttons are interactive components that render in messages. They can be clicked 
 
 | Field      | Type                                                | Description                                                                                                         |
 |------------|-----------------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| id?        | integer                                             | Unique identifier for the component; auto populated through increment if not provided.                              |
 | type       | integer                                             | `2` for a button                                                                                                    |
 | style      | integer                                             | A [button style](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/button-object-button-styles)                                 |
 | label?     | string                                              | Text that appears on the button; max 80 characters                                                                  |
@@ -180,9 +217,11 @@ Premium buttons will automatically have:
         "content": "This is a message with components.",
         "components": [
             {
+                "id": 1,
                 "type": 1,
                 "components": [
                     {
+                        "id": 2,
                         "type": 2,
                         "label": "Click me!",
                         "style": 1,
@@ -225,6 +264,7 @@ Premium buttons will automatically have:
     "id": "846462639134605312",
     "guild_id": "290926798626357999",
     "data": {
+        "id": 2,
         "custom_id": "click_one",
         "component_type": 2
     },
@@ -263,9 +303,11 @@ The payloads for the select menu components are detailed in the [select menu str
     "content": "Mason is looking for new arena partners. What classes do you play?",
     "components": [
         {
+            "id": 1,
             "type": 1,
             "components": [
                 {
+                    "id": 2,
                     "type": 3,
                     "custom_id": "class_select_1",
                     "options":[
@@ -313,6 +355,7 @@ The payloads for the select menu components are detailed in the [select menu str
 
 | Field                 | Type                                                                                                                      | Description                                                                                                                                                                |
 |-----------------------|---------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| id?                   | integer                                                                                                                   | Unique identifier for the component; auto populated through increment if not provided.                                                                                     |
 | type                  | integer                                                                                                                   | [Type](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object-component-types) of select menu component (text: `3`, user: `5`, role: `6`, mentionable: `7`, channels: `8`) |
 | custom_id             | string                                                                                                                    | ID for the select menu; max 100 characters                                                                                                                                 |
 | options?\*            | array of [select options](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/select-menu-object-select-option-structure)               | Specified choices in a select menu (only required and available for string selects (type `3`); max 25                                                                      |
@@ -353,7 +396,8 @@ The payloads for the select menu components are detailed in the [select menu str
     "application_id": "845027738276462632",
     "channel_id": "772908445358620702",
     "data": {
-        "component_type":3,
+        "id": 2,
+        "component_type": 3,
         "custom_id": "class_select_1",
         "values": [
             "mage",
@@ -397,8 +441,11 @@ The payloads for the select menu components are detailed in the [select menu str
         "channel_id": "772908445358620702",
         "components": [
             {
+                "id": 1,
+                "type": 1,
                 "components": [
                     {
+                        "id": 2,
                         "custom_id": "class_select_1",
                         "max_values": 1,
                         "min_values": 1,
@@ -434,8 +481,7 @@ The payloads for the select menu components are detailed in the [select menu str
                         "placeholder": "Choose a class",
                         "type": 3
                     }
-                ],
-                "type": 1
+                ]
             }
         ],
         "content": "Mason is looking for new arena partners. What classes do you play?",
@@ -512,23 +558,29 @@ When defining a text input component, you can set attributes to customize the be
 ###### Text Input Example
 
 ```json
-// this is a modal
+// This is a modal
 {
-  "title": "My Cool Modal",
-  "custom_id": "cool_modal",
-  "components": [{
-    "type": 1,
-    "components": [{
-      "type": 4,
-      "custom_id": "name",
-      "label": "Name",
-      "style": 1,
-      "min_length": 1,
-      "max_length": 4000,
-      "placeholder": "John",
-      "required": true
-    }]
-  }]
+    "title":"My Cool Modal",
+    "custom_id":"cool_modal",
+    "components": [
+        {
+            "id": 1,
+            "type":1,
+            "components":[
+                {
+                    "id": 2,
+                    "type":4,
+                    "custom_id":"name",
+                    "label":"Name",
+                    "style":1,
+                    "min_length":1,
+                    "max_length":4000,
+                    "placeholder":"John",
+                    "required":true
+                }
+            ]
+        }
+    ]
 }
 ```
 
@@ -538,6 +590,7 @@ When defining a text input component, you can set attributes to customize the be
 
 | Field        | Type    | Description                                                                                       |
 |--------------|---------|---------------------------------------------------------------------------------------------------|
+| id?          | integer | Unique identifier for the component; auto populated through increment if not provided.            |
 | type         | integer | `4` for a text input                                                                              |
 | custom_id    | string  | Developer-defined identifier for the input; max 100 characters                                    |
 | style        | integer | The [Text Input Style](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/text-input-object-text-input-styles) |
@@ -577,19 +630,21 @@ When defining a text input component, you can set attributes to customize the be
     },
     "channel_id": "772908445358620702",
     "data": {
+        "custom_id": "cool_modal",
         "components": [
             {
+                "id": 1,
                 "type": 1,
                 "components": [
                     {
+                        "id": 2,
                         "custom_id": "name",
                         "type": 4,
                         "value": "John"
                     }
                 ]
             }
-        ],
-        "custom_id": "cool_modal"
+        ]
     },
     "guild_id": "772904309264089089",
     "id": "847587388497854464",
@@ -618,3 +673,431 @@ When defining a text input component, you can set attributes to customize the be
     "version": 1
 }
 ```
+
+# V2 Components
+
+These are new components, requiring the [message flag](#DOCS_RESOURCES_MESSAGE/message-object-message-flags) `1 << 15`.
+
+You can have a maximum of `10` top-level components per message.
+The total number of nested components (including top level) cannot exceed `30`.
+
+The upper limit of text characters is `4000` in total.
+
+Limitations:
+- The ability to set the `content`, `embeds`, `sticker_ids`, and `poll` field will be disabled
+- No support for audio files
+- No simple text preview for files
+- No embeds for urls
+
+## Sections
+
+Section components allow you to define up to 3 text display components and add either a thumbnail or button to the right side.
+
+![A section component](message-components-v2-section.png)
+
+### Section Object
+
+###### Section Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "id": 1,
+            "type": 9,
+            "components": [
+                {
+                    "id": 2,
+                    "type": 10,
+                    "content": "Hey there"
+                },
+                {
+                    "id": 3,
+                    "type": 10,
+                    "content": "I'm a text in a section"
+                }
+            ],
+            "accessory": {
+                "id": 4,
+                "type": 11,
+                "media": {
+                    "url": "https://i.imgur.com/SpCbHBI.jpeg"
+                },
+                "description": "Condescending Cat is not happy with me",
+                "spoiler": false
+            }
+        }
+    ]
+}
+```
+
+###### Section Structure
+
+| Field      | Type                                                                                                              | Description                                                                                                                                                         |
+|------------|-------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| id?        | integer                                                                                                           | Unique identifier for the component; auto populated through increment if not provided.                                                                              |
+| type       | integer                                                                                                           | `9` for a section component                                                                                                                                         |
+| components | array of [text display objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/text-display-object-text-display-structure) | Array of text display components; max of 3.                                                                                                                         |
+| accessory  | component                                                                                                         | An accessory component, can be [Thumbnail](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/thumbnail-object) or [Button](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/button-object) |
+
+## Text Displays
+
+A text display component allows you to send text.
+
+![A text display component](message-components-v2-text-display.png)
+
+### Text Display Object
+
+###### Text Display Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "id": 1,
+            "type": 10,
+            "content": "I'm a text"
+        }
+    ]
+}
+```
+
+###### Text Display Structure
+
+| Field   | Type    | Description                               |
+|---------|---------|-------------------------------------------|
+| type    | integer | `10` for a text display component         |
+| content | string  | The content of the text display component |
+
+## Thumbnails
+
+A thumbnail component can be used as an accessory for a section component.
+
+### Thumbnail Object
+
+###### Thumbnail Structure
+
+| Field        | Type                                                                                           | Description                                                                            |
+|--------------|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+| id?          | integer                                                                                        | Unique identifier for the component; auto populated through increment if not provided. |
+| type         | integer                                                                                        | `11` for a thumbnail component                                                         |
+| media        | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | Media item for the thumbnail                                                           |
+| description? | ?string                                                                                        | Description for the thumbnail (max 256 characters). Defaults to `null`                 |
+| spoiler?     | boolean                                                                                        | Whether the thumbnail is a spoiler. Defaults to `false`                                |
+
+## Media Galleries
+
+Media gallery components allow you to group images, videos or gifs into a gallery grid.
+
+![A media gallery component](message-components-v2-media-gallery.png)
+
+### Media Gallery Object
+
+###### Media Gallery Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "id": 1,
+            "type": 12,
+            "items": [
+                {
+                    "media": {
+                        "url": "https://i.imgur.com/JOKsNeT.jpeg"
+                    },
+                    "description": "Cat I'm a kitty cat",
+                    "spoiler": false
+                },
+                {
+                    "media": {
+                        "url": "https://i.imgur.com/ujAO1Dl.mp4"
+                    },
+                    "description": "Cat wearing an anglerfish costume",
+                    "spoiler": false
+                }
+            ]
+        }
+    ]
+}
+```
+
+###### Media Gallery Structure
+
+| Field | Type                                                                                                                           | Description                                                                            |
+|-------|--------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+| id?   | integer                                                                                                                        | Unique identifier for the component; auto populated through increment if not provided. |
+| type  | integer                                                                                                                        | `12` for a media gallery component                                                     |
+| items | array of [media gallery item objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/media-gallery-object-media-gallery-item-structure) | Array of media gallery items; max of 10.                                               |
+
+###### Media Gallery Item Structure
+
+| Field        | Type                                                                                           | Description                                                               |
+|--------------|------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
+| media        | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | Media item for the gallery                                                |
+| description? | ?string                                                                                        | Description for the gallery item (max 256 characters). Defaults to `null` |
+| spoiler?     | boolean                                                                                        | Whether the gallery item is a spoiler. Defaults to `false`                |
+
+## File Components
+
+File components allow you to send a file. You can also spoiler it.
+
+Note: There is no "preview" support for simple text files, nor audio file support.
+
+![A file component](message-components-v2-file.png)
+
+### File Object
+
+###### File Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "id": 1,
+            "type": 13,
+            "file": {
+                "url": "attachment://file.txt"
+            }
+        }
+    ],
+    "attachments": [
+        {
+            "id": 0,
+            "filename": "file.txt"
+        }
+    ]
+}
+```
+
+###### File Structure
+
+| Field    | Type                                                                                           | Description                                                                            |
+|----------|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+| id?      | integer                                                                                        | Unique identifier for the component; auto populated through increment if not provided. |
+| type     | integer                                                                                        | `13` for a file component                                                              |
+| file     | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | The file to be displayed, supports only `attachment://<filename>` references           |
+| spoiler? | boolean                                                                                        | Whether the file is a spoiler. Defaults to `false`                                     |
+
+## Separators
+
+Separator components allow you to divide components with a divider. You can make the divider big or small, and make it invisible if needed.
+
+![A separator component](message-components-v2-separator.png)
+
+### Separator Object
+
+###### Separator Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "id": 1,
+            "type": 10,
+            "content": "I'm a text"
+        },
+        {
+            "id": 2,
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+        },
+        {
+            "id": 3,
+            "type": 10,
+            "content": "I'm yet another text, but above me is a dividing separator."
+        }
+    ]
+}
+```
+
+###### Separator Structure
+
+| Field    | Type                                                                                                    | Description                                                                            |
+|----------|---------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+| id?      | integer                                                                                                 | Unique identifier for the component; auto populated through increment if not provided. |
+| type     | integer                                                                                                 | `14` for a separator component                                                         |
+| divider? | boolean                                                                                                 | Whether the separator is a divider. Defaults to `true`                                 |
+| spacing? | [seperator spacing size](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/separator-object-separator-spacing-size) | Spacing size for the separator. Defaults to `1`                                        |
+
+###### Separator Spacing Size
+
+| Size  | Value | Description        |
+|-------|-------|--------------------|
+| SMALL | 1     | Small spacing size |
+| LARGE | 2     | Large spacing size |
+
+## Containers
+
+Containers are a new way to group components together. You can also specify a accent color (similar to embeds) and spoiler it.
+
+![A container component](message-components-v2-container.png)
+
+### Container Object
+
+###### Container Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "id": 1,
+            "type": 17,
+            "components": [
+                {
+                    "id": 2,
+                    "type": 9,
+                    "components": [
+                        {
+                            "id": 3,
+                            "type": 10,
+                            "content": "Hey there"
+                        },
+                        {
+                            "id": 4,
+                            "type": 10,
+                            "content": "I'm a text in a section"
+                        }
+                    ],
+                    "accessory": {
+                        "id": 5,
+                        "type": 11,
+                        "media": {
+                            "url": "https://i.imgur.com/SpCbHBI.jpeg"
+                        },
+                        "description": "Condescending Cat is not happy with me",
+                        "spoiler": false
+                    }
+                },
+                {
+                    "id": 6,
+                    "type": 12,
+                    "items": [
+                        {
+                            "media": {
+                                "url": "https://i.imgur.com/JOKsNeT.jpeg"
+                            },
+                            "description": "Cat I'm a kitty cat",
+                            "spoiler": false
+                        },
+                        {
+                            "media": {
+                                "url": "https://i.imgur.com/ujAO1Dl.mp4"
+                            },
+                            "description": "Cat wearing an anglerfish costume",
+                            "spoiler": false
+                        }
+                    ]
+                },
+                {
+                    "id": 7,
+                    "type": 13,
+                    "file": {
+                        "url": "attachment://file.txt"
+                    }
+                },
+                {
+                    "id": 8,
+                    "type": 10,
+                    "content": "I'm a text"
+                },
+                {
+                    "id": 9,
+                    "type": 14,
+                    "divider": true,
+                    "spacing": 1
+                },
+                {
+                    "id": 10,
+                    "type": 10,
+                    "content": "I'm yet another text, but above me is a dividing separator."
+                }
+            ]
+        }
+    ],
+    "attachments": [
+        {
+            "id": 0,
+            "filename": "file.txt"
+        }
+    ]
+}
+```
+
+###### Container Structure
+
+| Field         | Type                                                                                 | Description                                                                                                                            |
+|---------------|--------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| id?           | integer                                                                              | Unique identifier for the component; auto populated through increment if not provided.                                                 |
+| type          | integer                                                                              | `17` for a container                                                                                                                   |
+| accent_color? | ?integer                                                                             | Color code for the container. Defaults to `null`                                                                                       |
+| spoiler?      | boolean                                                                              | Whether the container is a spoiler. Defaults to `false`                                                                                |
+| components    | array of [component objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object) | Can be of [type](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object-component-types) `1`, `9`, `10`, `12`, `13` or `14`; max of 10 |
+
+
+## Unfurled Media Items
+
+Unfurled media items are the base for V2 components. It allows you to specify an arbitrary url or `attachment://<filename>` reference.
+
+Upon resolving by discord, it returns the full object, including metadata about height, width and content type.
+
+### Unfurled Media Item Object
+
+###### Unfurled Media Item Example
+
+```json
+{
+    "url": "https://i.imgur.com/SpCbHBI.jpeg"
+}
+```
+
+###### Unfurled Media Item Structure
+
+| Field | Type   | Description                                                      |
+|-------|--------|------------------------------------------------------------------|
+| url   | string | Supports arbitrary URLs and `attachment://<filename>` references |
+
+###### Unfurled Media Item Loading State
+| Value | State            |
+|-------|------------------|
+| 0     | Unknown          |
+| 1     | Loading          |
+| 2     | Loaded Success   |
+| 3     | Loaded Not Found |
+
+###### Resolved Unfurled Media Item Example
+
+```json
+{
+    "url": "https://i.imgur.com/SpCbHBI.jpeg",
+    "proxy_url": "https://images-ext-1.discordapp.net/external/JnxJ6nc07YuYZoa1zhTq2JW6oHVNJh4fDcTKElOG1F8/https/i.imgur.com/SpCbHBI.jpeg",
+    "width": 640,
+    "height": 640,
+    "placeholder": "GSkKFwQ7d3dgiXiHeKZXWJd2eL+Y94wK",
+    "placeholder_version": 1,
+    "content_type": "image/jpeg",
+    "loading_state": 2,
+    "flags": 0
+}
+```
+
+###### Resolved Unfurled Media Item Structure
+
+// TEMPORARY NOTE: I'm unsure if the nullability / optionality of these fields is correct. Waiting for final confirmation.
+// loading_state might be never null, but who knows.
+
+| Field         | Type     | Description                                                                                                         |
+|---------------|----------|---------------------------------------------------------------------------------------------------------------------|
+| url           | string   | source url of media item (only supports http(s) and attachments)                                                    |
+| proxy_url     | ?string  | a proxied url of the media item                                                                                     |
+| height        | ?integer | height of media item                                                                                                |
+| width         | ?integer | width of media item                                                                                                 |
+| content_type  | ?string  | the media item's [media type](https://en.wikipedia.org/wiki/Media_type)                                             |
+| loading_state | ?integer | [loading state](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object-unfurled-media-item-loading-state) |
