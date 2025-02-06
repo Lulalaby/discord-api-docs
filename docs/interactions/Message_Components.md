@@ -8,6 +8,8 @@ There are several different types of components; this documentation will outline
 
 Components are a field on the [message object](#DOCS_RESOURCES_MESSAGE/message-object), so you can use them whether you're sending messages or responding to a [slash command](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/) or other interaction.
 
+You can have a maximum of `10` top-level components per message. The maximum number of nested components is `30`.
+
 ### Component Object
 
 ###### Component Types
@@ -635,7 +637,7 @@ When defining a text input component, you can set attributes to customize the be
 | Field      | Type                                                                                                              | Description                                                                                                                                                         |
 |------------|-------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | type       | integer                                                                                                           | `9` for a section component                                                                                                                                         |
-| components | array of [text display objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/text-display-object-text-display-structure) | Array of text display components                                                                                                                                    |
+| components | array of [text display objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/text-display-object-text-display-structure) | Array of text display components; max of 3.                                                                                                                         |
 | accessory  | component                                                                                                         | An accessory component, can be [Thumbnail](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/thumbnail-object) or [Button](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/button-object) |
 
 ### Text Display Object
@@ -662,10 +664,10 @@ When defining a text input component, you can set attributes to customize the be
 
 ###### Media Gallery Structure
 
-| Field | Type                                                                                                                           | Description                        |
-|-------|--------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
-| type  | integer                                                                                                                        | `12` for a media gallery component |
-| items | array of [media gallery item objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/media-gallery-object-media-gallery-item-structure) | Array of media gallery items       |
+| Field | Type                                                                                                                           | Description                              |
+|-------|--------------------------------------------------------------------------------------------------------------------------------|------------------------------------------|
+| type  | integer                                                                                                                        | `12` for a media gallery component       |
+| items | array of [media gallery item objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/media-gallery-object-media-gallery-item-structure) | Array of media gallery items; max of 10. |
 
 ###### Media Gallery Item Structure
 
@@ -706,12 +708,12 @@ When defining a text input component, you can set attributes to customize the be
 
 ###### Container Structure
 
-| Field         | Type                                                                                 | Description                                                                                                                 |
-|---------------|--------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
-| type          | integer                                                                              | `17` for a container                                                                                                        |
-| accent_color? | integer                                                                              | Color code for the container                                                                                                |
-| spoiler?      | boolean                                                                              | Whether the container is a spoiler                                                                                          |
-| components    | array of [component objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object) | Can be of [type](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object-component-types) `1`, `9`, `10`, `12`, `13` or `14` |
+| Field         | Type                                                                                 | Description                                                                                                                            |
+|---------------|--------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| type          | integer                                                                              | `17` for a container                                                                                                                   |
+| accent_color? | integer                                                                              | Color code for the container                                                                                                           |
+| spoiler?      | boolean                                                                              | Whether the container is a spoiler                                                                                                     |
+| components    | array of [component objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object) | Can be of [type](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object-component-types) `1`, `9`, `10`, `12`, `13` or `14`; max of 10 |
 
 
 
