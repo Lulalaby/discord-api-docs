@@ -767,21 +767,21 @@ When defining a text input component, you can set attributes to customize the be
 
 ```json
 {
-	"flags": 32768,
-	"components": [
-		{
-			"type": 13,
-			"file": {
-				"url": "attachment://file.txt"
-			}
-		}
-	],
-	"attachments": [
-		{
-			"id": 0,
-			"filename": "file.txt"
-		}
-	]
+    "flags": 32768,
+    "components": [
+        {
+            "type": 13,
+            "file": {
+                "url": "attachment://file.txt"
+            }
+        }
+    ],
+    "attachments": [
+        {
+            "id": 0,
+            "filename": "file.txt"
+        }
+    ]
 }
 ```
 
@@ -889,11 +889,11 @@ When defining a text input component, you can set attributes to customize the be
                     ]
                 },
                 {
-        			"type": 13,
-        			"file": {
-        				"url": "attachment://file.txt"
-        			}
-        		},
+                    "type": 13,
+                    "file": {
+                        "url": "attachment://file.txt"
+                    }
+                },
                 {
                     "type": 10,
                     "content": "I'm a text"
@@ -910,12 +910,12 @@ When defining a text input component, you can set attributes to customize the be
             ]
         }
     ],
-	"attachments": [
-		{
-			"id": 0,
-			"filename": "file.txt"
-		}
-	]
+    "attachments": [
+        {
+            "id": 0,
+            "filename": "file.txt"
+        }
+    ]
 }
 ```
 
