@@ -634,6 +634,8 @@ When defining a text input component, you can set attributes to customize the be
 
 ### Section Object
 
+![A section component](../../images/message-components-v2-section.png)
+
 ###### Section Example
 
 ```json
@@ -655,9 +657,9 @@ When defining a text input component, you can set attributes to customize the be
             "accessory": {
                 "type": 11,
                 "media": {
-                    "url": "https://example.com/image.png"
+                    "url": "https://i.imgur.com/SpCbHBI.jpeg"
                 },
-                "description": "An example image",
+                "description": "Condescending Cat is not happy with me",
                 "spoiler": false
             }
         }
@@ -674,6 +676,8 @@ When defining a text input component, you can set attributes to customize the be
 | accessory  | component                                                                                                         | An accessory component, can be [Thumbnail](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/thumbnail-object) or [Button](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/button-object) |
 
 ### Text Display Object
+
+![A text display component](../../images/message-components-v2-text-display.png)
 
 ###### Text Display Example
 
@@ -709,6 +713,8 @@ When defining a text input component, you can set attributes to customize the be
 
 ### Media Gallery Object
 
+![A media gallery component](../../images/message-components-v2-media-gallery.png)
+
 ###### Media Gallery Example
 
 ```json
@@ -720,16 +726,16 @@ When defining a text input component, you can set attributes to customize the be
             "items": [
                 {
                     "media": {
-                        "url": "https://example.com/image.png"
+                        "url": "https://i.imgur.com/JOKsNeT.jpeg"
                     },
-                    "description": "An example image",
+                    "description": "Cat I'm a kitty cat",
                     "spoiler": false
                 },
                 {
                     "media": {
-                        "url": "https://example.com/video.mp4"
+                        "url": "https://i.imgur.com/ujAO1Dl.mp4"
                     },
-                    "description": "An example video",
+                    "description": "Cat wearing an anglerfish costume",
                     "spoiler": false
                 }
             ]
@@ -755,20 +761,27 @@ When defining a text input component, you can set attributes to customize the be
 
 ### File Object
 
+![A file component](../../images/message-components-v2-file.png)
+
 ###### File Example
 
 ```json
 {
-    "flags": 32768,
-    "components": [
-        {
-            "type": 13,
-            "file": {
-                "url": "attachment://file.txt"
-            },
-            "spoiler": true
-        }
-    ]
+	"flags": 32768,
+	"components": [
+		{
+			"type": 13,
+			"file": {
+				"url": "attachment://file.txt"
+			}
+		}
+	],
+	"attachments": [
+		{
+			"id": 0,
+			"filename": "file.txt"
+		}
+	]
 }
 ```
 
@@ -781,6 +794,8 @@ When defining a text input component, you can set attributes to customize the be
 | spoiler? | boolean                                                                                        | Whether the file is a spoiler                                                |
 
 ### Separator Object
+
+![A separator component](../../images/message-components-v2-separator.png)
 
 ###### Separator Example
 
@@ -822,6 +837,8 @@ When defining a text input component, you can set attributes to customize the be
 
 ### Container Object
 
+![A container component](../../images/message-components-v2-container.png)
+
 ###### Container Example
 
 ```json
@@ -846,9 +863,9 @@ When defining a text input component, you can set attributes to customize the be
                     "accessory": {
                         "type": 11,
                         "media": {
-                            "url": "https://example.com/image.png"
+                            "url": "https://i.imgur.com/SpCbHBI.jpeg"
                         },
-                        "description": "An example image",
+                        "description": "Condescending Cat is not happy with me",
                         "spoiler": false
                     }
                 },
@@ -857,27 +874,26 @@ When defining a text input component, you can set attributes to customize the be
                     "items": [
                         {
                             "media": {
-                                "url": "https://example.com/image.png"
+                                "url": "https://i.imgur.com/JOKsNeT.jpeg"
                             },
-                            "description": "An example image",
+                            "description": "Cat I'm a kitty cat",
                             "spoiler": false
                         },
                         {
                             "media": {
-                                "url": "https://example.com/video.mp4"
+                                "url": "https://i.imgur.com/ujAO1Dl.mp4"
                             },
-                            "description": "An example video",
+                            "description": "Cat wearing an anglerfish costume",
                             "spoiler": false
                         }
                     ]
                 },
                 {
-                    "type": 13,
-                    "file": {
-                        "url": "attachment://file.txt"
-                    },
-                    "spoiler": true
-                },
+        			"type": 13,
+        			"file": {
+        				"url": "attachment://file.txt"
+        			}
+        		},
                 {
                     "type": 10,
                     "content": "I'm a text"
@@ -893,7 +909,13 @@ When defining a text input component, you can set attributes to customize the be
                 }
             ]
         }
-    ]
+    ],
+	"attachments": [
+		{
+			"id": 0,
+			"filename": "file.txt"
+		}
+	]
 }
 ```
 
@@ -913,7 +935,7 @@ When defining a text input component, you can set attributes to customize the be
 
 ```json
 {
-    "url": "https://example.com/image.png"
+    "url": "https://i.imgur.com/SpCbHBI.jpeg"
 }
 ```
 
@@ -928,13 +950,13 @@ When defining a text input component, you can set attributes to customize the be
 
 ```json
 {
-    "url": "https://media1.tenor.com/m/vMklK5h1pIAAAAAd/peach-dancing.gif",
-    "proxy_url": "https://images-ext-1.discordapp.net/external/ofryCNUcw5T6EJlFmzmS3U9t-q5ZMXYqynzzsVjx_l0/https/media1.tenor.com/m/vMklK5h1pIAAAAAd/peach-dancing.gif",
-    "width": 336,
-    "height": 336,
-    "placeholder": "GQgaBwAHeIh5h4eEiViIZ5d3h3BoCYcF",
+    "url": "https://i.imgur.com/SpCbHBI.jpeg",
+    "proxy_url": "https://images-ext-1.discordapp.net/external/JnxJ6nc07YuYZoa1zhTq2JW6oHVNJh4fDcTKElOG1F8/https/i.imgur.com/SpCbHBI.jpeg",
+    "width": 640,
+    "height": 640,
+    "placeholder": "GSkKFwQ7d3dgiXiHeKZXWJd2eL+Y94wK",
     "placeholder_version": 1,
-    "content_type": "image/gif",
+    "content_type": "image/jpeg",
     "loading_state": 2,
     "flags": 0
 }
