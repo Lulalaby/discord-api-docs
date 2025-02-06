@@ -630,7 +630,40 @@ When defining a text input component, you can set attributes to customize the be
 }
 ```
 
+## V2 Components
+
 ### Section Object
+
+###### Section Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "type": 9,
+            "components": [
+                {
+                    "type": 10,
+                    "content": "Hey there"
+                },
+                {
+                    "type": 10,
+                    "content": "I'm a text in a section"
+                }
+            ],
+            "accessory": {
+                "type": 11,
+                "media": {
+                    "url": "https://example.com/image.png"
+                },
+                "description": "An example image",
+                "spoiler": false
+            }
+        }
+    ]
+}
+```
 
 ###### Section Structure
 
@@ -641,6 +674,20 @@ When defining a text input component, you can set attributes to customize the be
 | accessory  | component                                                                                                         | An accessory component, can be [Thumbnail](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/thumbnail-object) or [Button](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/button-object) |
 
 ### Text Display Object
+
+###### Text Display Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "type": 10,
+            "content": "I'm a text"
+        }
+    ]
+}
+```
 
 ###### Text Display Structure
 
@@ -662,6 +709,35 @@ When defining a text input component, you can set attributes to customize the be
 
 ### Media Gallery Object
 
+###### Media Gallery Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "type": 12,
+            "items": [
+                {
+                    "media": {
+                        "url": "https://example.com/image.png"
+                    },
+                    "description": "An example image",
+                    "spoiler": false
+                },
+                {
+                    "media": {
+                        "url": "https://example.com/video.mp4"
+                    },
+                    "description": "An example video",
+                    "spoiler": false
+                }
+            ]
+        }
+    ]
+}
+```
+
 ###### Media Gallery Structure
 
 | Field | Type                                                                                                                           | Description                              |
@@ -679,6 +755,23 @@ When defining a text input component, you can set attributes to customize the be
 
 ### File Object
 
+###### File Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "type": 13,
+            "file": {
+                "url": "attachment://file.txt"
+            },
+            "spoiler": true
+        }
+    ]
+}
+```
+
 ###### File Structure
 
 | Field    | Type                                                                                           | Description                                                                  |
@@ -688,6 +781,29 @@ When defining a text input component, you can set attributes to customize the be
 | spoiler? | boolean                                                                                        | Whether the file is a spoiler                                                |
 
 ### Separator Object
+
+###### Separator Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "type": 10,
+            "content": "I'm a text"
+        },
+        {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+        },
+        {
+            "type": 10,
+            "content": "I'm yet another text, but above me is a dividing separator."
+        }
+    ]
+}
+```
 
 ###### Separator Structure
 
@@ -706,6 +822,81 @@ When defining a text input component, you can set attributes to customize the be
 
 ### Container Object
 
+###### Container Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "type": 17,
+            "components": [
+                {
+                    "type": 9,
+                    "components": [
+                        {
+                            "type": 10,
+                            "content": "Hey there"
+                        },
+                        {
+                            "type": 10,
+                            "content": "I'm a text in a section"
+                        }
+                    ],
+                    "accessory": {
+                        "type": 11,
+                        "media": {
+                            "url": "https://example.com/image.png"
+                        },
+                        "description": "An example image",
+                        "spoiler": false
+                    }
+                },
+                {
+                    "type": 12,
+                    "items": [
+                        {
+                            "media": {
+                                "url": "https://example.com/image.png"
+                            },
+                            "description": "An example image",
+                            "spoiler": false
+                        },
+                        {
+                            "media": {
+                                "url": "https://example.com/video.mp4"
+                            },
+                            "description": "An example video",
+                            "spoiler": false
+                        }
+                    ]
+                },
+                {
+                    "type": 13,
+                    "file": {
+                        "url": "attachment://file.txt"
+                    },
+                    "spoiler": true
+                },
+                {
+                    "type": 10,
+                    "content": "I'm a text"
+                },
+                {
+                    "type": 14,
+                    "divider": true,
+                    "spacing": 1
+                },
+                {
+                    "type": 10,
+                    "content": "I'm yet another text, but above me is a dividing separator."
+                }
+            ]
+        }
+    ]
+}
+```
+
 ###### Container Structure
 
 | Field         | Type                                                                                 | Description                                                                                                                            |
@@ -716,11 +907,35 @@ When defining a text input component, you can set attributes to customize the be
 | components    | array of [component objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object) | Can be of [type](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object-component-types) `1`, `9`, `10`, `12`, `13` or `14`; max of 10 |
 
 
-
 ### Unfurled Media Item Object
+
+###### Unfurled Media Item Example
+
+```json
+{
+    "url": "https://example.com/image.png"
+}
+```
 
 ###### Unfurled Media Item Structure
 
 | Field | Type   | Description                                                      |
 |-------|--------|------------------------------------------------------------------|
 | url   | string | Supports arbitrary URLs and `attachment://<filename>` references |
+
+
+###### Resolved Unfurled Media Item Example
+
+```json
+{
+    "url": "https://media1.tenor.com/m/vMklK5h1pIAAAAAd/peach-dancing.gif",
+    "proxy_url": "https://images-ext-1.discordapp.net/external/ofryCNUcw5T6EJlFmzmS3U9t-q5ZMXYqynzzsVjx_l0/https/media1.tenor.com/m/vMklK5h1pIAAAAAd/peach-dancing.gif",
+    "width": 336,
+    "height": 336,
+    "placeholder": "GQgaBwAHeIh5h4eEiViIZ5d3h3BoCYcF",
+    "placeholder_version": 1,
+    "content_type": "image/gif",
+    "loading_state": 2,
+    "flags": 0
+}
+```
