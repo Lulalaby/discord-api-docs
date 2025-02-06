@@ -630,11 +630,15 @@ When defining a text input component, you can set attributes to customize the be
 }
 ```
 
-## V2 Components
+# V2 Components
 
-### Section Object
+## Sections
+
+Section components allow you to define up to 3 text display components and add either a thumbnail or button to the right side.
 
 ![A section component](../../images/message-components-v2-section.png)
+
+### Section Object
 
 ###### Section Example
 
@@ -675,9 +679,13 @@ When defining a text input component, you can set attributes to customize the be
 | components | array of [text display objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/text-display-object-text-display-structure) | Array of text display components; max of 3.                                                                                                                         |
 | accessory  | component                                                                                                         | An accessory component, can be [Thumbnail](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/thumbnail-object) or [Button](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/button-object) |
 
-### Text Display Object
+## Text Displays
+
+A text display component allows you to send text.
 
 ![A text display component](../../images/message-components-v2-text-display.png)
+
+### Text Display Object
 
 ###### Text Display Example
 
@@ -711,9 +719,13 @@ When defining a text input component, you can set attributes to customize the be
 | description? | string                                                                                         | Description for the thumbnail (max 1024 characters) |
 | spoiler?     | boolean                                                                                        | Whether the thumbnail is a spoiler                  |
 
-### Media Gallery Object
+## Media Gelleries
+
+Media gallery components allow you to group images, videos or gifs into a gallery grid.
 
 ![A media gallery component](../../images/message-components-v2-media-gallery.png)
+
+### Media Gallery Object
 
 ###### Media Gallery Example
 
@@ -759,9 +771,13 @@ When defining a text input component, you can set attributes to customize the be
 | description? | string                                                                                         | Description for the gallery item (max 1024 characters) |
 | spoiler?     | boolean                                                                                        | Whether the gallery item is a spoiler                  |
 
-### File Object
+## File Components
+
+File components allow you to send a file. You can also spoiler it.
 
 ![A file component](../../images/message-components-v2-file.png)
+
+### File Object
 
 ###### File Example
 
@@ -793,9 +809,13 @@ When defining a text input component, you can set attributes to customize the be
 | file     | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | The file to be displayed, supports only `attachment://<filename>` references |
 | spoiler? | boolean                                                                                        | Whether the file is a spoiler                                                |
 
-### Separator Object
+## Separators
+
+Separator components allow you to divide components with a divider. You can make the divider big or small, and make it invisible if needed.
 
 ![A separator component](../../images/message-components-v2-separator.png)
+
+### Separator Object
 
 ###### Separator Example
 
@@ -835,9 +855,13 @@ When defining a text input component, you can set attributes to customize the be
 | SMALL | 1     | Small spacing size |
 | LARGE | 2     | Large spacing size |
 
-### Container Object
+## Containers
+
+Containers are a new way to group components together. You can also specify a accent color (similar to embeds) and spoiler it.
 
 ![A container component](../../images/message-components-v2-container.png)
+
+### Container Object
 
 ###### Container Example
 
@@ -928,6 +952,12 @@ When defining a text input component, you can set attributes to customize the be
 | spoiler?      | boolean                                                                              | Whether the container is a spoiler                                                                                                     |
 | components    | array of [component objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object) | Can be of [type](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object-component-types) `1`, `9`, `10`, `12`, `13` or `14`; max of 10 |
 
+
+## Unfurled Media Items
+
+Unfurled media items are the base for V2 components. It allows you to specify an arbitrary url or `attachment://<filename>` reference.
+
+Upon resolving by discord, it returns the full object, including metadata about height, width and content type.
 
 ### Unfurled Media Item Object
 
