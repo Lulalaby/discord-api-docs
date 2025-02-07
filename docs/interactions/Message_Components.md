@@ -632,6 +632,13 @@ When defining a text input component, you can set attributes to customize the be
 
 # V2 Components
 
+These are new new components, requiring the [message flag](#DOCS_RESOURCES_MESSAGE/message-object-message-flags) `1 << 15`.
+
+Limitations:
+- The ability to set the `content` and `embeds` field will be disabled
+- No support for audio files
+- No simple text preview for files
+
 ## Sections
 
 Section components allow you to define up to 3 text display components and add either a thumbnail or button to the right side.
@@ -774,6 +781,8 @@ Media gallery components allow you to group images, videos or gifs into a galler
 ## File Components
 
 File components allow you to send a file. You can also spoiler it.
+
+Note: There is no "preview" support for simple text files, nor audio file support.
 
 ![A file component](../../images/message-components-v2-file.png)
 
