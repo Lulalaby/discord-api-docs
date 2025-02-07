@@ -727,7 +727,7 @@ A text display component allows you to send text.
 | description? | string                                                                                         | Description for the thumbnail (max 1024 characters) |
 | spoiler?     | boolean                                                                                        | Whether the thumbnail is a spoiler                  |
 
-## Media Gelleries
+## Media Galleries
 
 Media gallery components allow you to group images, videos or gifs into a gallery grid.
 
