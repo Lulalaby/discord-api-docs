@@ -638,6 +638,7 @@ Limitations:
 - The ability to set the `content` and `embeds` field will be disabled
 - No support for audio files
 - No simple text preview for files
+- No embeds for urls
 
 ## Sections
 
