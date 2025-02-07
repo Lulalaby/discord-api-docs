@@ -8,8 +8,6 @@ There are several different types of components; this documentation will outline
 
 Components are a field on the [message object](#DOCS_RESOURCES_MESSAGE/message-object), so you can use them whether you're sending messages or responding to a [slash command](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/) or other interaction.
 
-You can have a maximum of `10` top-level components per message. The maximum number of nested components is `30`.
-
 ### Component Object
 
 ###### Component Types
@@ -633,6 +631,8 @@ When defining a text input component, you can set attributes to customize the be
 # V2 Components
 
 These are new new components, requiring the [message flag](#DOCS_RESOURCES_MESSAGE/message-object-message-flags) `1 << 15`.
+
+You can have a maximum of `10` top-level components per message. The maximum number of nested components is `30`.
 
 Limitations:
 - The ability to set the `content` and `embeds` field will be disabled
