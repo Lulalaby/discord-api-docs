@@ -12,23 +12,24 @@ Components are a field on the [message object](#DOCS_RESOURCES_MESSAGE/message-o
 
 ###### Component Types
 
-| Type | Name               | Description                                       | Version\* |
-|------|--------------------|---------------------------------------------------|-----------|
-| 1    | Action Row         | Container for other components                    | 1, 2      |
-| 2    | Button             | Button object                                     | 1, 2      |
-| 3    | String Select      | Select menu for picking from defined text options | 1, 2      |
-| 4    | Text Input         | Text input object                                 | 1, 2      |
-| 5    | User Select        | Select menu for users                             | 1, 2      |
-| 6    | Role Select        | Select menu for roles                             | 1, 2      |
-| 7    | Mentionable Select | Select menu for mentionables (users *and* roles)  | 1, 2      |
-| 8    | Channel Select     | Select menu for channels                          | 1, 2      |
-| 9    | Section            | Section component                                 | 2         |
-| 10   | Text Display       | Text display component                            | 2         |
-| 11   | Thumbnail          | Thumbnail component for a section component       | 2         |
-| 12   | Media Gallery      | Media gallery component                           | 2         |
-| 13   | File               | File display component                            | 2         |
-| 14   | Separator          | Separator component                               | 2         |
-| 17   | Container          | Container for other components                    | 2         |
+| Type | Name                    | Description                                       | Version\* |
+|------|-------------------------|---------------------------------------------------|-----------|
+| 1    | Action Row              | Container for other components                    | 1, 2      |
+| 2    | Button                  | Button object                                     | 1, 2      |
+| 3    | String Select           | Select menu for picking from defined text options | 1, 2      |
+| 4    | Text Input              | Text input object                                 | 1, 2      |
+| 5    | User Select             | Select menu for users                             | 1, 2      |
+| 6    | Role Select             | Select menu for roles                             | 1, 2      |
+| 7    | Mentionable Select      | Select menu for mentionables (users *and* roles)  | 1, 2      |
+| 8    | Channel Select          | Select menu for channels                          | 1, 2      |
+| 9    | Section                 | Section component                                 | 2         |
+| 10   | Text Display            | Text display component                            | 2         |
+| 11   | Thumbnail               | Thumbnail component for a section component       | 2         |
+| 12   | Media Gallery           | Media gallery component                           | 2         |
+| 13   | File                    | File display component                            | 2         |
+| 14   | Separator               | Separator component                               | 2         |
+| 16   | Content Inventory Entry | Cannot be used by bots                            | 1, 2      |
+| 17   | Container               | Container for other components                    | 2         |
 
 \* Using `v2` components requires setting the [message flag](#DOCS_RESOURCES_MESSAGE/message-object-message-flags) `1 << 15`.
 
