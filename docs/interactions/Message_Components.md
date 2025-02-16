@@ -1012,11 +1012,11 @@ Upon resolving by discord, it returns the full object, including metadata about 
 
 ###### Resolved Unfurled Media Item Structure
 
-| Field         | Type    | Description                                                                                     |
-|---------------|---------|-------------------------------------------------------------------------------------------------|
-| url           | string  | source url of media item (only supports http(s) and attachments)                                |
-| proxy_url     | string  | a proxied url of the media item                                                                 |
-| height        | integer | height of media item                                                                            |
-| width         | integer | width of media item                                                                             |
-| content_type  | string  | the media item's [media type](https://en.wikipedia.org/wiki/Media_type)                         |
-| loading_state | integer | [loading state](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object-loading-state) |
+| Field         | Type    | Description                                                                                                         |
+|---------------|---------|---------------------------------------------------------------------------------------------------------------------|
+| url           | string  | source url of media item (only supports http(s) and attachments)                                                    |
+| proxy_url     | string  | a proxied url of the media item                                                                                     |
+| height        | integer | height of media item                                                                                                |
+| width         | integer | width of media item                                                                                                 |
+| content_type  | string  | the media item's [media type](https://en.wikipedia.org/wiki/Media_type)                                             |
+| loading_state | integer | [loading state](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object-unfurled-media-item-loading-state) |
