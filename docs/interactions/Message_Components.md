@@ -635,6 +635,8 @@ These are new new components, requiring the [message flag](#DOCS_RESOURCES_MESSA
 
 You can have a maximum of `10` top-level components per message. The maximum number of nested components is `30`.
 
+The upper limit of text characters is `4000` in total.
+
 Limitations:
 - The ability to set the `content` and `embeds` field will be disabled
 - No support for audio files
