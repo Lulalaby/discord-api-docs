@@ -723,12 +723,12 @@ A text display component allows you to send text.
 
 ###### Thumbnail Structure
 
-| Field        | Type                                                                                           | Description                                         |
-|--------------|------------------------------------------------------------------------------------------------|-----------------------------------------------------|
-| type         | integer                                                                                        | `11` for a thumbnail component                      |
-| media        | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | Media item for the thumbnail                        |
-| description? | ?string                                                                                        | Description for the thumbnail (max 1024 characters) |
-| spoiler?     | boolean                                                                                        | Whether the thumbnail is a spoiler                  |
+| Field        | Type                                                                                           | Description                                                             |
+|--------------|------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| type         | integer                                                                                        | `11` for a thumbnail component                                          |
+| media        | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | Media item for the thumbnail                                            |
+| description? | ?string                                                                                        | Description for the thumbnail (max 1024 characters). Defaults to `null` |
+| spoiler?     | boolean                                                                                        | Whether the thumbnail is a spoiler. Defaults to `false`                 |
 
 ## Media Galleries
 
@@ -776,11 +776,11 @@ Media gallery components allow you to group images, videos or gifs into a galler
 
 ###### Media Gallery Item Structure
 
-| Field        | Type                                                                                           | Description                                            |
-|--------------|------------------------------------------------------------------------------------------------|--------------------------------------------------------|
-| media        | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | Media item for the gallery                             |
-| description? | ?string                                                                                        | Description for the gallery item (max 1024 characters) |
-| spoiler?     | boolean                                                                                        | Whether the gallery item is a spoiler                  |
+| Field        | Type                                                                                           | Description                                                                |
+|--------------|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| media        | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | Media item for the gallery                                                 |
+| description? | ?string                                                                                        | Description for the gallery item (max 1024 characters). Defaults to `null` |
+| spoiler?     | boolean                                                                                        | Whether the gallery item is a spoiler. Defaults to `false`                 |
 
 ## File Components
 
@@ -820,7 +820,7 @@ Note: There is no "preview" support for simple text files, nor audio file suppor
 |----------|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
 | type     | integer                                                                                        | `13` for a file component                                                    |
 | file     | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | The file to be displayed, supports only `attachment://<filename>` references |
-| spoiler? | boolean                                                                                        | Whether the file is a spoiler                                                |
+| spoiler? | boolean                                                                                        | Whether the file is a spoiler. Defaults to `false`                           |
 
 ## Separators
 
@@ -855,11 +855,11 @@ Separator components allow you to divide components with a divider. You can make
 
 ###### Separator Structure
 
-| Field    | Type                                                                                                    | Description                        |
-|----------|---------------------------------------------------------------------------------------------------------|------------------------------------|
-| type     | integer                                                                                                 | `14` for a separator component     |
-| divider? | boolean                                                                                                 | Whether the separator is a divider |
-| spacing? | [seperator spacing size](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/separator-object-separator-spacing-size) | Spacing size for the separator     |
+| Field    | Type                                                                                                    | Description                                            |
+|----------|---------------------------------------------------------------------------------------------------------|--------------------------------------------------------|
+| type     | integer                                                                                                 | `14` for a separator component                         |
+| divider? | boolean                                                                                                 | Whether the separator is a divider. Defaults to `true` |
+| spacing? | [seperator spacing size](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/separator-object-separator-spacing-size) | Spacing size for the separator. Defaults to `1`        |
 
 ###### Separator Spacing Size
 
@@ -961,8 +961,8 @@ Containers are a new way to group components together. You can also specify a ac
 | Field         | Type                                                                                 | Description                                                                                                                            |
 |---------------|--------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
 | type          | integer                                                                              | `17` for a container                                                                                                                   |
-| accent_color? | ?integer                                                                             | Color code for the container                                                                                                           |
-| spoiler?      | boolean                                                                              | Whether the container is a spoiler                                                                                                     |
+| accent_color? | ?integer                                                                             | Color code for the container. Defaults to `null`                                                                                       |
+| spoiler?      | boolean                                                                              | Whether the container is a spoiler. Defaults to `false`                                                                                |
 | components    | array of [component objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object) | Can be of [type](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object-component-types) `1`, `9`, `10`, `12`, `13` or `14`; max of 10 |
 
 
