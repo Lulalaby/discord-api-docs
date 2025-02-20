@@ -727,7 +727,7 @@ A text display component allows you to send text.
 |--------------|------------------------------------------------------------------------------------------------|-----------------------------------------------------|
 | type         | integer                                                                                        | `11` for a thumbnail component                      |
 | media        | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | Media item for the thumbnail                        |
-| description? | string                                                                                         | Description for the thumbnail (max 1024 characters) |
+| description? | ?string                                                                                        | Description for the thumbnail (max 1024 characters) |
 | spoiler?     | boolean                                                                                        | Whether the thumbnail is a spoiler                  |
 
 ## Media Galleries
@@ -779,7 +779,7 @@ Media gallery components allow you to group images, videos or gifs into a galler
 | Field        | Type                                                                                           | Description                                            |
 |--------------|------------------------------------------------------------------------------------------------|--------------------------------------------------------|
 | media        | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | Media item for the gallery                             |
-| description? | string                                                                                         | Description for the gallery item (max 1024 characters) |
+| description? | ?string                                                                                        | Description for the gallery item (max 1024 characters) |
 | spoiler?     | boolean                                                                                        | Whether the gallery item is a spoiler                  |
 
 ## File Components
@@ -961,7 +961,7 @@ Containers are a new way to group components together. You can also specify a ac
 | Field         | Type                                                                                 | Description                                                                                                                            |
 |---------------|--------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
 | type          | integer                                                                              | `17` for a container                                                                                                                   |
-| accent_color? | integer                                                                              | Color code for the container                                                                                                           |
+| accent_color? | ?integer                                                                             | Color code for the container                                                                                                           |
 | spoiler?      | boolean                                                                              | Whether the container is a spoiler                                                                                                     |
 | components    | array of [component objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object) | Can be of [type](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object-component-types) `1`, `9`, `10`, `12`, `13` or `14`; max of 10 |
 
