@@ -12,16 +12,26 @@ Components are a field on the [message object](#DOCS_RESOURCES_MESSAGE/message-o
 
 ###### Component Types
 
-| Type | Name               | Description                                       |
-|------|--------------------|---------------------------------------------------|
-| 1    | Action Row         | Container for other components                    |
-| 2    | Button             | Button object                                     |
-| 3    | String Select      | Select menu for picking from defined text options |
-| 4    | Text Input         | Text input object                                 |
-| 5    | User Select        | Select menu for users                             |
-| 6    | Role Select        | Select menu for roles                             |
-| 7    | Mentionable Select | Select menu for mentionables (users *and* roles)  |
-| 8    | Channel Select     | Select menu for channels                          |
+| Type | Name                    | Description                                       | Version\* |
+|------|-------------------------|---------------------------------------------------|-----------|
+| 1    | Action Row              | Container for other components                    | 1, 2      |
+| 2    | Button                  | Button object                                     | 1, 2      |
+| 3    | String Select           | Select menu for picking from defined text options | 1, 2      |
+| 4    | Text Input              | Text input object                                 | 1, 2      |
+| 5    | User Select             | Select menu for users                             | 1, 2      |
+| 6    | Role Select             | Select menu for roles                             | 1, 2      |
+| 7    | Mentionable Select      | Select menu for mentionables (users *and* roles)  | 1, 2      |
+| 8    | Channel Select          | Select menu for channels                          | 1, 2      |
+| 9    | Section                 | Section component                                 | 2         |
+| 10   | Text Display            | Text display component                            | 2         |
+| 11   | Thumbnail               | Thumbnail component for a section component       | 2         |
+| 12   | Media Gallery           | Media gallery component                           | 2         |
+| 13   | File                    | File display component                            | 2         |
+| 14   | Separator               | Separator component                               | 2         |
+| 16   | Content Inventory Entry | Cannot be used by bots                            | 1, 2      |
+| 17   | Container               | Container for other components                    | 2         |
+
+\* Using `v2` components requires setting the [message flag](#DOCS_RESOURCES_MESSAGE/message-object-message-flags) `1 << 15`.
 
 The structure of each component type is described in detail below.
 
@@ -618,3 +628,397 @@ When defining a text input component, you can set attributes to customize the be
     "version": 1
 }
 ```
+
+# V2 Components
+
+These are new new components, requiring the [message flag](#DOCS_RESOURCES_MESSAGE/message-object-message-flags) `1 << 15`.
+
+You can have a maximum of `10` top-level components per message. The maximum number of nested components is `30`.
+
+The upper limit of text characters is `4000` in total.
+
+Limitations:
+- The ability to set the `content` and `embeds` field will be disabled
+- No support for audio files
+- No simple text preview for files
+- No embeds for urls
+
+## Sections
+
+Section components allow you to define up to 3 text display components and add either a thumbnail or button to the right side.
+
+![A section component](../../images/message-components-v2-section.png)
+
+### Section Object
+
+###### Section Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "type": 9,
+            "components": [
+                {
+                    "type": 10,
+                    "content": "Hey there"
+                },
+                {
+                    "type": 10,
+                    "content": "I'm a text in a section"
+                }
+            ],
+            "accessory": {
+                "type": 11,
+                "media": {
+                    "url": "https://i.imgur.com/SpCbHBI.jpeg"
+                },
+                "description": "Condescending Cat is not happy with me",
+                "spoiler": false
+            }
+        }
+    ]
+}
+```
+
+###### Section Structure
+
+| Field      | Type                                                                                                              | Description                                                                                                                                                         |
+|------------|-------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| type       | integer                                                                                                           | `9` for a section component                                                                                                                                         |
+| components | array of [text display objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/text-display-object-text-display-structure) | Array of text display components; max of 3.                                                                                                                         |
+| accessory  | component                                                                                                         | An accessory component, can be [Thumbnail](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/thumbnail-object) or [Button](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/button-object) |
+
+## Text Displays
+
+A text display component allows you to send text.
+
+![A text display component](../../images/message-components-v2-text-display.png)
+
+### Text Display Object
+
+###### Text Display Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "type": 10,
+            "content": "I'm a text"
+        }
+    ]
+}
+```
+
+###### Text Display Structure
+
+| Field   | Type    | Description                               |
+|---------|---------|-------------------------------------------|
+| type    | integer | `10` for a text display component         |
+| content | string  | The content of the text display component |
+
+### Thumbnail Object
+
+###### Thumbnail Structure
+
+| Field        | Type                                                                                           | Description                                                             |
+|--------------|------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| type         | integer                                                                                        | `11` for a thumbnail component                                          |
+| media        | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | Media item for the thumbnail                                            |
+| description? | ?string                                                                                        | Description for the thumbnail (max 1024 characters). Defaults to `null` |
+| spoiler?     | boolean                                                                                        | Whether the thumbnail is a spoiler. Defaults to `false`                 |
+
+## Media Galleries
+
+Media gallery components allow you to group images, videos or gifs into a gallery grid.
+
+![A media gallery component](../../images/message-components-v2-media-gallery.png)
+
+### Media Gallery Object
+
+###### Media Gallery Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "type": 12,
+            "items": [
+                {
+                    "media": {
+                        "url": "https://i.imgur.com/JOKsNeT.jpeg"
+                    },
+                    "description": "Cat I'm a kitty cat",
+                    "spoiler": false
+                },
+                {
+                    "media": {
+                        "url": "https://i.imgur.com/ujAO1Dl.mp4"
+                    },
+                    "description": "Cat wearing an anglerfish costume",
+                    "spoiler": false
+                }
+            ]
+        }
+    ]
+}
+```
+
+###### Media Gallery Structure
+
+| Field | Type                                                                                                                           | Description                              |
+|-------|--------------------------------------------------------------------------------------------------------------------------------|------------------------------------------|
+| type  | integer                                                                                                                        | `12` for a media gallery component       |
+| items | array of [media gallery item objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/media-gallery-object-media-gallery-item-structure) | Array of media gallery items; max of 10. |
+
+###### Media Gallery Item Structure
+
+| Field        | Type                                                                                           | Description                                                                |
+|--------------|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| media        | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | Media item for the gallery                                                 |
+| description? | ?string                                                                                        | Description for the gallery item (max 1024 characters). Defaults to `null` |
+| spoiler?     | boolean                                                                                        | Whether the gallery item is a spoiler. Defaults to `false`                 |
+
+## File Components
+
+File components allow you to send a file. You can also spoiler it.
+
+Note: There is no "preview" support for simple text files, nor audio file support.
+
+![A file component](../../images/message-components-v2-file.png)
+
+### File Object
+
+###### File Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "type": 13,
+            "file": {
+                "url": "attachment://file.txt"
+            }
+        }
+    ],
+    "attachments": [
+        {
+            "id": 0,
+            "filename": "file.txt"
+        }
+    ]
+}
+```
+
+###### File Structure
+
+| Field    | Type                                                                                           | Description                                                                  |
+|----------|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| type     | integer                                                                                        | `13` for a file component                                                    |
+| file     | [unfurled media item object](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object) | The file to be displayed, supports only `attachment://<filename>` references |
+| spoiler? | boolean                                                                                        | Whether the file is a spoiler. Defaults to `false`                           |
+
+## Separators
+
+Separator components allow you to divide components with a divider. You can make the divider big or small, and make it invisible if needed.
+
+![A separator component](../../images/message-components-v2-separator.png)
+
+### Separator Object
+
+###### Separator Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "type": 10,
+            "content": "I'm a text"
+        },
+        {
+            "type": 14,
+            "divider": true,
+            "spacing": 1
+        },
+        {
+            "type": 10,
+            "content": "I'm yet another text, but above me is a dividing separator."
+        }
+    ]
+}
+```
+
+###### Separator Structure
+
+| Field    | Type                                                                                                    | Description                                            |
+|----------|---------------------------------------------------------------------------------------------------------|--------------------------------------------------------|
+| type     | integer                                                                                                 | `14` for a separator component                         |
+| divider? | boolean                                                                                                 | Whether the separator is a divider. Defaults to `true` |
+| spacing? | [seperator spacing size](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/separator-object-separator-spacing-size) | Spacing size for the separator. Defaults to `1`        |
+
+###### Separator Spacing Size
+
+| Size  | Value | Description        |
+|-------|-------|--------------------|
+| SMALL | 1     | Small spacing size |
+| LARGE | 2     | Large spacing size |
+
+## Containers
+
+Containers are a new way to group components together. You can also specify a accent color (similar to embeds) and spoiler it.
+
+![A container component](../../images/message-components-v2-container.png)
+
+### Container Object
+
+###### Container Example
+
+```json
+{
+    "flags": 32768,
+    "components": [
+        {
+            "type": 17,
+            "components": [
+                {
+                    "type": 9,
+                    "components": [
+                        {
+                            "type": 10,
+                            "content": "Hey there"
+                        },
+                        {
+                            "type": 10,
+                            "content": "I'm a text in a section"
+                        }
+                    ],
+                    "accessory": {
+                        "type": 11,
+                        "media": {
+                            "url": "https://i.imgur.com/SpCbHBI.jpeg"
+                        },
+                        "description": "Condescending Cat is not happy with me",
+                        "spoiler": false
+                    }
+                },
+                {
+                    "type": 12,
+                    "items": [
+                        {
+                            "media": {
+                                "url": "https://i.imgur.com/JOKsNeT.jpeg"
+                            },
+                            "description": "Cat I'm a kitty cat",
+                            "spoiler": false
+                        },
+                        {
+                            "media": {
+                                "url": "https://i.imgur.com/ujAO1Dl.mp4"
+                            },
+                            "description": "Cat wearing an anglerfish costume",
+                            "spoiler": false
+                        }
+                    ]
+                },
+                {
+                    "type": 13,
+                    "file": {
+                        "url": "attachment://file.txt"
+                    }
+                },
+                {
+                    "type": 10,
+                    "content": "I'm a text"
+                },
+                {
+                    "type": 14,
+                    "divider": true,
+                    "spacing": 1
+                },
+                {
+                    "type": 10,
+                    "content": "I'm yet another text, but above me is a dividing separator."
+                }
+            ]
+        }
+    ],
+    "attachments": [
+        {
+            "id": 0,
+            "filename": "file.txt"
+        }
+    ]
+}
+```
+
+###### Container Structure
+
+| Field         | Type                                                                                 | Description                                                                                                                            |
+|---------------|--------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| type          | integer                                                                              | `17` for a container                                                                                                                   |
+| accent_color? | ?integer                                                                             | Color code for the container. Defaults to `null`                                                                                       |
+| spoiler?      | boolean                                                                              | Whether the container is a spoiler. Defaults to `false`                                                                                |
+| components    | array of [component objects](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object) | Can be of [type](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/component-object-component-types) `1`, `9`, `10`, `12`, `13` or `14`; max of 10 |
+
+
+## Unfurled Media Items
+
+Unfurled media items are the base for V2 components. It allows you to specify an arbitrary url or `attachment://<filename>` reference.
+
+Upon resolving by discord, it returns the full object, including metadata about height, width and content type.
+
+### Unfurled Media Item Object
+
+###### Unfurled Media Item Example
+
+```json
+{
+    "url": "https://i.imgur.com/SpCbHBI.jpeg"
+}
+```
+
+###### Unfurled Media Item Structure
+
+| Field | Type   | Description                                                      |
+|-------|--------|------------------------------------------------------------------|
+| url   | string | Supports arbitrary URLs and `attachment://<filename>` references |
+
+###### Unfurled Media Item Loading State
+| Value | State            |
+|-------|------------------|
+| 0     | Unknown          |
+| 1     | Loading          |
+| 2     | Loaded Success   |
+| 3     | Loaded Not Found |
+
+###### Resolved Unfurled Media Item Example
+
+```json
+{
+    "url": "https://i.imgur.com/SpCbHBI.jpeg",
+    "proxy_url": "https://images-ext-1.discordapp.net/external/JnxJ6nc07YuYZoa1zhTq2JW6oHVNJh4fDcTKElOG1F8/https/i.imgur.com/SpCbHBI.jpeg",
+    "width": 640,
+    "height": 640,
+    "placeholder": "GSkKFwQ7d3dgiXiHeKZXWJd2eL+Y94wK",
+    "placeholder_version": 1,
+    "content_type": "image/jpeg",
+    "loading_state": 2,
+    "flags": 0
+}
+```
+
+###### Resolved Unfurled Media Item Structure
+
+| Field         | Type    | Description                                                                                                         |
+|---------------|---------|---------------------------------------------------------------------------------------------------------------------|
+| url           | string  | source url of media item (only supports http(s) and attachments)                                                    |
+| proxy_url     | string  | a proxied url of the media item                                                                                     |
+| height        | integer | height of media item                                                                                                |
+| width         | integer | width of media item                                                                                                 |
+| content_type  | string  | the media item's [media type](https://en.wikipedia.org/wiki/Media_type)                                             |
+| loading_state | integer | [loading state](#DOCS_INTERACTIONS_MESSAGE_COMPONENTS/unfurled-media-item-object-unfurled-media-item-loading-state) |
