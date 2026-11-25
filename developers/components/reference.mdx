@@ -2,7 +2,7 @@
 title: Component Reference
 ---
 
-import {ManualAnchor} from '/snippets/manualanchor.jsx'
+import { ManualAnchor } from '/snippets/manualanchor.jsx'
 
 This document serves as a comprehensive reference for all available components. It covers three main categories:
 
@@ -60,6 +60,8 @@ The following is a complete table of available components. Details about each co
 | 21   | [Radio Group](/developers/components/reference#radio-group)               | Single-choice set of options                                   | Interactive | Modal          |
 | 22   | [Checkbox Group](/developers/components/reference#checkbox-group)         | Multi-selectable group of checkboxes                           | Interactive | Modal          |
 | 23   | [Checkbox](/developers/components/reference#checkbox)                     | Single checkbox for yes/no choice                              | Interactive | Modal          |
+| 25   | [Overflow Menu](/developers/components/reference#overflow-menu)           | Menu for additional actions                                    | Interactive | Message        |
+| 26   | [Menu Action Item](/developers/components/reference#menu-action-item)     | Action item for an Overflow Menu                               | Interactive | Message        |
 
 --------------
 ## Anatomy of a Component
@@ -91,7 +93,7 @@ An Action Row is a top-level layout component.
 
 Action Rows can contain one of the following:
 
-- Up to 5 contextually grouped [buttons](/developers/components/reference#button)
+- Up to 5 contextually grouped [buttons](/developers/components/reference#button) or [Overflow Menus](/developers/components/reference#overflow-menu)
 - A single select component ([string select](/developers/components/reference#string-select), [user select](/developers/components/reference#user-select), [role select](/developers/components/reference#role-select), [mentionable select](/developers/components/reference#mentionable-select), or [channel select](/developers/components/reference#channel-select))
 
 <Info>
@@ -101,23 +103,24 @@ Action Rows can contain one of the following:
 <ManualAnchor id="action-row-action-row-structure" />
 ###### Action Row Structure
 
-| Field      | Type                                                                                                            | Description                                                                                                                                                   |
-|------------|-----------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| type       | integer                                                                                                         | `1` for action row component                                                                                                                                  |
-| id?        | integer                                                                                                         | Optional identifier for component                                                                                                                             |
-| components | array of [action row child components](/developers/components/reference#action-row-action-row-child-components) | Up to 5 interactive [button](/developers/components/reference#button) components or a single [select](/developers/components/reference#user-select) component |
+| Field      | Type                                                                                                            | Description                                                                                                                                                                                                                       |
+|------------|-----------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| type       | integer                                                                                                         | `1` for action row component                                                                                                                                                                                                      |
+| id?        | integer                                                                                                         | Optional identifier for component                                                                                                                                                                                                 |
+| components | array of [action row child components](/developers/components/reference#action-row-action-row-child-components) | Up to 5 interactive [button](/developers/components/reference#button) and [overflow menu](/developers/components/reference#overflow-menu) components or a single [select](/developers/components/reference#user-select) component |
 
 <ManualAnchor id="action-row-action-row-child-components" />
 ###### Action Row Child Components
 
-| Available Components                                                      | Description                               |
-|---------------------------------------------------------------------------|-------------------------------------------|
-| [Button](/developers/components/reference#button)                         | An Action Row can contain up to 5 Buttons |
-| [String Select](/developers/components/reference#string-select)           | A single String Select                    |
-| [User Select](/developers/components/reference#user-select)               | A single User Select                      |
-| [Role Select](/developers/components/reference#role-select)               | A single Role Select                      |
-| [Mentionable Select](/developers/components/reference#mentionable-select) | A single Mentionable Select               |
-| [Channel Select](/developers/components/reference#channel-select)         | A single Channel Select                   |
+| Available Components                                                      | Description                                                 |
+|---------------------------------------------------------------------------|-------------------------------------------------------------|
+| [Button](/developers/components/reference#button)                         | An Action Row can contain up to 5 buttons or overflow menus |
+| [Overflow Menu](/developers/components/reference#overflow-menu)           | An Overflow Menu can be used like a button in an Action Row |
+| [String Select](/developers/components/reference#string-select)           | A single String Select                                      |
+| [User Select](/developers/components/reference#user-select)               | A single User Select                                        |
+| [Role Select](/developers/components/reference#role-select)               | A single Role Select                                        |
+| [Mentionable Select](/developers/components/reference#mentionable-select) | A single Mentionable Select                                 |
+| [Channel Select](/developers/components/reference#channel-select)         | A single Channel Select                                     |
 
 <ManualAnchor id="action-row-examples" />
 ###### Examples
@@ -1523,10 +1526,11 @@ Don't hardcode `components` to contain only text components. We may add other co
 <ManualAnchor id="section-section-accessory-components" />
 ###### Section Accessory Components
 
-| Available Components                                    |
-|---------------------------------------------------------|
-| [Button](/developers/components/reference#button)       |
-| [Thumbnail](/developers/components/reference#thumbnail) |
+| Available Components                                            |
+|-----------------------------------------------------------------|
+| [Button](/developers/components/reference#button)               |
+| [Thumbnail](/developers/components/reference#thumbnail)         |
+| [Overflow Menu](/developers/components/reference#overflow-menu) |
 
 <ManualAnchor id="section-examples" />
 ###### Examples
@@ -2493,6 +2497,130 @@ While you can't set a checkbox as required, you can use a [Checkbox Group](/deve
     ```
   </Accordion>
 </AccordionGroup>
+
+--------------
+## Overflow Menu
+
+An Overflow Menu is an interactive component that displays grouped [Menu Action Items](/developers/components/reference#menu-action-item). Selecting an item sends an [interaction](/developers/interactions/receiving-and-responding#interaction-object) to your app, unless the item uses the `LINK` style.
+
+Overflow Menus can be placed in an [Action Row](/developers/components/reference#action-row) or in a [Section](/developers/components/reference#section)'s `accessory` field.
+
+<ManualAnchor id="overflow-menu-overflow-menu-structure" />
+###### Overflow Menu Structure
+
+| Field  | Type                                                                          | Description                        |
+|--------|-------------------------------------------------------------------------------|------------------------------------|
+| type   | integer                                                                       | `25` for an Overflow Menu          |
+| id?    | integer                                                                       | Optional identifier for component  |
+| groups | array of [Overflow Menu Groups](#overflow-menu-overflow-menu-group-structure) | Groups of menu action items; max 8 |
+
+<ManualAnchor id="overflow-menu-overflow-menu-group-structure" />
+###### Overflow Menu Group Structure
+
+| Field      | Type                                                                                                       | Description                                     |
+|------------|------------------------------------------------------------------------------------------------------------|-------------------------------------------------|
+| label?     | string                                                                                                     | Optional label for the group; max 80 characters |
+| components | array of [Menu Action Items](/developers/components/reference#menu-action-item-menu-action-item-structure) | Menu action items in this group; max 8          |
+
+<ManualAnchor id="overflow-menu-examples" />
+###### Examples
+
+<Accordion title="Message Example" description="Message create payload with an Overflow Menu" icon="code">
+  <img src="/images/components/overflow-menu.webp" alt="Example of an Overflow Menu with grouped actions" style={{width: "auto", height: "250px"}} />
+
+  ```jsonc
+  {
+    "flags": 32768, // MessageFlags.IS_COMPONENTS_V2
+    "components": [
+      {
+        "type": 1, // ComponentType.ACTION_ROW
+        "components": [
+          {
+            "type": 25, // ComponentType.OVERFLOW_MENU
+            "groups": [
+              {
+                "label": "Manage",
+                "components": [
+                  {
+                    "type": 26, // ComponentType.MENU_ACTION_ITEM
+                    "custom_id": "edit",
+                    "label": "Edit",
+                    "style": 1 // MenuActionItemStyle.DEFAULT
+                  },
+                  {
+                    "type": 26, // ComponentType.MENU_ACTION_ITEM
+                    "custom_id": "delete",
+                    "label": "Delete",
+                    "style": 2 // MenuActionItemStyle.DANGER
+                  }
+                ]
+              },
+              {
+                "components": [
+                  {
+                    "type": 26, // ComponentType.MENU_ACTION_ITEM
+                    "label": "Learn more",
+                    "style": 3, // MenuActionItemStyle.LINK
+                    "url": "https://discord.com/developers/docs"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  ```
+</Accordion>
+
+--------------
+## Menu Action Item
+
+A Menu Action Item is an action in an [Overflow Menu](/developers/components/reference#overflow-menu). `DEFAULT` and `DANGER` items send an [interaction](/developers/interactions/receiving-and-responding#interaction-object) to your app when selected. `LINK` items open a URL.
+
+<ManualAnchor id="menu-action-item-menu-action-item-structure" />
+###### Menu Action Item Structure
+
+| Field        | Type                                                      | Description                                                                              |
+|--------------|-----------------------------------------------------------|------------------------------------------------------------------------------------------|
+| type         | integer                                                   | `26` for a Menu Action Item                                                              |
+| id?          | integer                                                   | Optional identifier for component                                                        |
+| custom_id?   | string                                                    | Developer-defined identifier for the item; 1-100 characters; returned in the interaction |
+| label        | string                                                    | Text displayed for the item; max 80 characters                                           |
+| style        | integer                                                   | The [Menu Action Item Style](#menu-action-item-menu-action-item-styles)                  |
+| description? | string                                                    | Additional text displayed below the label; max 100 characters                            |
+| url?         | string                                                    | URL to open; required for the `LINK` style                                               |
+| emoji?       | partial [emoji](/developers/resources/emoji#emoji-object) | `name`, `id`, and `animated`                                                             |
+| disabled?    | boolean                                                   | Whether the item is disabled (defaults to `false`)                                       |
+
+`DEFAULT` and `DANGER` items require `custom_id`. `LINK` items require `url` and do not send an interaction.
+
+<ManualAnchor id="menu-action-item-menu-action-item-styles" />
+###### Menu Action Item Styles
+
+| Name    | Value | Action                                        | Required Field |
+|---------|-------|-----------------------------------------------|----------------|
+| Default | 1     | Sends an interaction when selected            | `custom_id`    |
+| Danger  | 2     | Sends an interaction for a destructive action | `custom_id`    |
+| Link    | 3     | Navigates to a URL                            | `url`          |
+
+<ManualAnchor id="menu-action-item-interaction-response-structure" />
+###### Menu Action Item Interaction Response Structure
+
+Selecting a `DEFAULT` or `DANGER` Menu Action Item produces a message component interaction. Its data includes the selected item's `component_type`, `id`, and `custom_id`:
+
+```jsonc
+{
+  "type": 3, // InteractionType.MESSAGE_COMPONENT
+  ...additionalInteractionFields, // See the interaction reference for all fields
+  "data": {
+    "component_type": 26, // ComponentType.MENU_ACTION_ITEM
+    "id": 2,
+    "custom_id": "edit"
+  }
+}
+```
 
 ----------------------
 ## Unfurled Media Item
